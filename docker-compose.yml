@@ -1,0 +1,56 @@
+version: "3"
+
+services:
+  
+  worker:
+    build:
+      context: .
+      dockerfile: worker.Dockerfile
+    depends_on:
+      - mysql
+    networks:
+      - backend
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+  
+  clean:
+    build:
+      context: .
+      dockerfile: clean.Dockerfile
+    depends_on:
+      - mysql
+    networks:
+      - backend
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  foxlinkevent:
+    build:
+      context: .
+      dockerfile: foxlinkevent.Dockerfile
+    depends_on:
+      - mysql
+    networks:
+      - backend
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  mysql:
+    image: mysql:8
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: foxlink
+      MYSQL_ROOT_PASSWORD: 123456
+    ports:
+      - 27001:3306
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  mysql-data:
