@@ -154,3 +154,5 @@ not_assign_mission = cursor.fetchall()
 
 print('\n\n========== NOT ASSIGNED MISSIONS ==========')
 print(pd.DataFrame(not_assign_mission).drop(columns=[0,2,3,4,5,6,7,8,10,11]))
+
+print(sum(period))

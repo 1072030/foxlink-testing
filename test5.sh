@@ -5,7 +5,7 @@ sleep 5
 
 # Step2 
 # Run the script to test Login Logout
-python app/utils/create_time.py -f test5 -s '2022-10-26 17:47:00'  # 重新設定測項 Json 檔內容
+python app/utils/create_time.py -f test5 -s '2022-11-13 12:12:00'  # 重新設定測項 Json 檔內容
 cp app/env_template.py app/env.py
 sed -i 's/test.json/test5.json/' app/env.py # 設定要執行的 Json 檔名
 docker-compose up -d --build foxlinkevent # 執行輸入 foxlinkevent 的 container

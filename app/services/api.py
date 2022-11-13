@@ -3,7 +3,7 @@ import time
 from pymysql import NULL
 import requests, json
 from app.env import SERVER_URL
-from app.services.log import create_log
+from app.services.log import create_log, kill_process
 from datetime import datetime
 
 def login(username):
@@ -12,12 +12,26 @@ def login(username):
         'username': username,
         'password': 'foxlink'
     }
+
+    create_log(
+        param = {
+            'mission_id': NULL,
+            'mqtt': '',
+            'username': username,
+            'action': 'login',
+            'description': '',
+            'mqtt_detail': '',
+            'time': datetime.now(),
+        }
+    )
+
     try:
-        r = requests.post(f'{SERVER_URL}/auth/token',data=payloads)
+        r = requests.post(f'{SERVER_URL}/auth/token',data=payloads, timeout=120)
         token = r.json()['access_token']
         status = r.status_code
-    except:
-        logging.warning(f"{username} can't login")
+    except Exception as e:
+        logging.warning(f"{username} can't loging")
+        logging.warning(e)
         token = None
     return status, token
 
@@ -27,11 +41,25 @@ def logout(token, username, reason='OffWork'):
         'Authorization': f'Bearer {token}',
         'accept': 'application/json'
     }
+
+    create_log(
+        param = {
+            'mission_id': NULL,
+            'mqtt': '',
+            'username': username,
+            'action': 'logout',
+            'description': '',
+            'mqtt_detail': '',
+            'time': datetime.now(),
+        }
+    )
+
     try:
-        r = requests.post(f'{SERVER_URL}/users/get-off-work?reason={reason}', headers=header)
+        r = requests.post(f'{SERVER_URL}/users/get-off-work?reason={reason}', headers=header, timeout=120)
         status = r.status_code
-    except:
+    except Exception as e:
         logging.warning(f"{username} can't logout")
+        logging.warning(e)
     return status
 
 def mission_action(token, mission_id, action, username):
@@ -86,7 +114,7 @@ def mission_action(token, mission_id, action, username):
                     }
                 )
                 if f.status_code != 200:
-                    time.sleep(15)
+                    time.sleep(30)
                 else:
                     break
             except:

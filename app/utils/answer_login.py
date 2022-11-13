@@ -32,14 +32,14 @@ for i in range(1, 201):
         'is_correct': False
     }
     
-# result['admin'] = {
-#         'login': 0,
-#         'logout': 0,
-#         'last_loging': None,
-#         'period': [],
-#         'avg': 0,
-#         'is_correct': False
-#     }
+result['admin'] = {
+        'login': 0,
+        'logout': 0,
+        'last_loging': None,
+        'period': [],
+        'avg': 0,
+        'is_correct': False
+    }
 
 for index, row in table.iterrows():
     start, end = None, None

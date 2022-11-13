@@ -1,5 +1,5 @@
 from datetime import datetime
-from app.utils.thread import WorkerThread
+from app.services.thread import WorkerThread
 from app.env import THREAD_NUMBER, WORKER
 import logging
 

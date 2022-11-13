@@ -1,6 +1,6 @@
 # Step1
 # Clean the database and wait til backend's restart process done
-echo "========= Clean Up ========="
+# echo "========= Clean Up ========="
 bash clean.sh
 sleep 5
 echo "========= Run Test Script ========="

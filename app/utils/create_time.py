@@ -39,7 +39,7 @@ class CreateTime():
         return self.data
 
     # 異常發生時間隨機產生;test3
-    def random_start_time(self, break_time=300, end_time=600):
+    def random_start_time(self, break_time=180, end_time=180):
         '''
         break_time: 多久時間內機台皆發生異常(預設5分鐘)。單位:秒
         end_time: 異常發生後，過多久解除(10分鐘)  單位:秒

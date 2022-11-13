@@ -122,7 +122,7 @@ for i in range(1, USER_NUMBER + 1):
 for i in range(1, USER_NUMBER + 1):
     name = 'C1{}'.format(str(i).zfill(3))
     if i >= 1 and i <= 36:
-        if result_user[name]['repair_start_date']:
+        if result_user[name]['start']:
             result_user[name]['is_correct'] = True
     else:
         result_user[name]['is_correct'] = True
@@ -132,7 +132,8 @@ print('\n\n========== USER BASE ==========\n\n')
 print(answer_user.to_string())
 
 print('\n\n========== USER LOGING -> ASSIGNED AVG ==========')
-print(sum(period) / len(period))
+# print(sum(period) / len(period))
+print(sum(period))
 
 result_mission = {}
 
@@ -183,7 +184,8 @@ print('\n\n========== MISSION BASE ==========\n\n')
 print(answer_mission.to_string())
 
 print('\n\n========== MISSION CREATED -> ASSIGN AVG ==========')
-print(sum(period) / len(period))
+# print(sum(period) / len(period))
+print(sum(period))
 
 cursor = connection.cursor()
 mySql_insert_query = f"""SELECT * FROM foxlink.missions m WHERE repair_start_date IS NULL AND is_cancel = 0"""

@@ -3,7 +3,7 @@ from datetime import datetime
 import logging
 from app.core.database import TestingLog, database
 import mysql.connector
-from app.env import DATABASE_HOST, DATABASE_PASSWORD, DATABASE_USER, DATABASE_NAME
+from app.env import DATABASE_HOST, DATABASE_PASSWORD, DATABASE_USER, DATABASE_NAME, TESTING_LOG
 
 
 async def log(param, sem):
@@ -19,25 +19,46 @@ async def log(param, sem):
         )
 
 def create_log(param):
-    try:
-        CONNECTION = mysql.connector.connect(
-        host = DATABASE_HOST,
-        database = DATABASE_NAME,
-        user = DATABASE_USER,
-        password = DATABASE_PASSWORD)
-        
-        cursor = CONNECTION.cursor()
+    if TESTING_LOG:
+        try:
+            CONNECTION = mysql.connector.connect(
+            host = DATABASE_HOST,
+            database = DATABASE_NAME,
+            user = DATABASE_USER,
+            password = DATABASE_PASSWORD)
+            
+            cursor = CONNECTION.cursor()
 
-        mySql_insert_query = "INSERT INTO testinglogs (mission_id, mqtt, username, action, description, mqtt_detail, time) VALUES ({}, '{}', '{}', '{}', '{}', '{}', '{}');".format(
-            param['mission_id'], param['mqtt'], param['username'], param['action'], param['description'], param['mqtt_detail'].replace("'", "\\\'"), param['time'].strftime('%Y-%m-%d  %H:%M:%S')
-        )
-        cursor.execute(mySql_insert_query)
-        CONNECTION.commit()
-        cursor.close()
-    except:
-        logging.warning(mySql_insert_query)
-        logging.warning(f"{param['username']} can't create log")
+            mySql_insert_query = "INSERT INTO testinglogs (mission_id, mqtt, username, action, description, mqtt_detail, time) VALUES ({}, '{}', '{}', '{}', '{}', '{}', '{}');".format(
+                param['mission_id'], param['mqtt'], param['username'], param['action'], param['description'], param['mqtt_detail'].replace("'", "\\\'"), param['time'].strftime('%Y-%m-%d  %H:%M:%S')
+            )
+            cursor.execute(mySql_insert_query)
+            CONNECTION.commit()
+            cursor.close()
+        except:
+            pass
+            # logging.warning(f"{param['username']} can't create log")
     
+def kill_process():
+    connection = mysql.connector.connect(
+    host = '140.118.157.9',
+    database = 'foxlink',
+    user = 'root',
+    password = 'AqqhQ993VNto',
+    port='27001')
+
+    cursor = connection.cursor()
+
+    mySql_insert_query = """SELECT ID FROM information_schema.processlist WHERE (COMMAND = "Query" or COMMAND = 'Sleep') and Time > 30"""
+    cursor.execute(mySql_insert_query)
+    id = cursor.fetchall()
+
+    for i in id:
+        mySql_insert_query = f"KILL {i[0]}"
+        cursor.execute(mySql_insert_query)
+        cursor.fetchall()
+        
+    cursor.close()
 
 async def database_connect():
     await database.connect()

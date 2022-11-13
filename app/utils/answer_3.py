@@ -98,7 +98,7 @@ for i in range(1, USER_NUMBER + 1):
     if i >= 1 and i <= 42:
         if result_user[name]['rescue'] and len(result_user[name]['start']) == 2:
             result_user[name]['is_correct'] = True
-            period.append((result_user[name]['assign'][1] - result_user[name]['repair_end_date'][0]) / pd.Timedelta(seconds=1) - 60)
+            period.append((result_user[name]['assign'][1] - result_user[name]['repair_end_date'][0]) / pd.Timedelta(seconds=1))
     elif i >= 43 and i <= 48:
         if len(result_user[name]['start']) == 2 and result_user[name]['rescue'] == False:
             result_user[name]['is_correct'] = True
@@ -159,7 +159,7 @@ for index, row in table_mission.iterrows():
         'assignee': row['user'],
         'is_accept': mission[row['mission']]['is_accept']
     }
-    print(row['user'], (mission[row['mission']]['assign_date'] - row['created_date']) / pd.Timedelta(seconds=1))
+    # print(row['user'], (mission[row['mission']]['assign_date'] - row['created_date']) / pd.Timedelta(seconds=1))
     if mission[row['mission']]['is_accept']:
         period.append((mission[row['mission']]['assign_date'] - row['created_date']) / pd.Timedelta(seconds=1))
 

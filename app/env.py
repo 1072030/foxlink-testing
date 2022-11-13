@@ -1,7 +1,7 @@
 import json, os
 
 CURRENT_PATH = os.getcwd()
-SCENARIO = 'testLogin.json'
+SCENARIO = 'test3.json'
 
 with open(f'{CURRENT_PATH}/app/scenario/{SCENARIO}') as jsonfile:
     testLogining_data = json.load(jsonfile)
@@ -18,4 +18,4 @@ DATABASE_NAME = 'foxlink'
 MQTT_BROKER = '140.118.157.9'
 MQTT_PORT = 1883
 SERVER_URL = "http://140.118.157.9:8080"
-RETRY = True
+TESTING_LOG = True

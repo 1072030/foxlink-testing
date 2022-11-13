@@ -2,7 +2,6 @@
 # Clean the database and wait til backend's restart process done
 bash clean.sh
 sleep 5
-
 # Step2 
 # Run the script to test Login Logout
 python app/utils/create_time.py -f test2  # 重新設定測項 Json 檔內容
