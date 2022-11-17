@@ -2,15 +2,16 @@ import logging
 import time
 from pymysql import NULL
 import requests, json
-from app.env import SERVER_URL
+from app.env import SERVER_URL, SCENARIO
 from app.services.log import create_log, kill_process
 from datetime import datetime
 
-def login(username):
+def login(username, id):
     status = None
     payloads = {
         'username': username,
-        'password': 'foxlink'
+        'password': 'foxlink',
+        # 'client_id': id
     }
 
     create_log(
@@ -30,7 +31,7 @@ def login(username):
         token = r.json()['access_token']
         status = r.status_code
     except Exception as e:
-        logging.warning(f"{username} can't loging")
+        logging.warning(f"{username} can't login")
         logging.warning(e)
         token = None
     return status, token
@@ -75,6 +76,8 @@ def mission_action(token, mission_id, action, username):
             r = requests.post(f'{SERVER_URL}/missions/{mission_id}/start', headers=header)
         elif action == 'accept':
             r = requests.post(f'{SERVER_URL}/missions/{mission_id}/accept', headers=header)
+        elif action == 'finish':
+            r = requests.post(f'{SERVER_URL}/missions/{mission_id}/finish', headers=header)
         status = r.status_code
     except:
         logging.warning(f"{username} can't {action}")
@@ -97,7 +100,7 @@ def mission_action(token, mission_id, action, username):
         }
     )
 
-    if status == 200 and action == 'start':
+    if status == 200 and action == 'start' and SCENARIO == "test3.json":
         while True:
             try:
                 f = requests.post(f'{SERVER_URL}/missions/{mission_id}/finish', headers=header)

@@ -49,16 +49,14 @@ class WorkerThread(threading.Thread):
             self.client.unsubscribe(topic)
             self.client.disconnect()
             self.client.loop_stop()
-            self.client = None
         
         try:
-            if self.client == None:
-                self.client = mqtt_client.Client(self.username)
-                self.client.connect(MQTT_BROKER, MQTT_PORT)
-                self.client.subscribe(self.topic)
-                self.client.on_message = on_message
-                self.client.on_subscribe = on_subscribe
-                self.client.loop_start()
+            self.client = mqtt_client.Client(self.username)
+            self.client.connect(MQTT_BROKER, MQTT_PORT)
+            self.client.subscribe(self.topic)
+            self.client.on_message = on_message
+            self.client.on_subscribe = on_subscribe
+            self.client.loop_start()
         except:
             logging.warning(f"{self.username} can't connect mqtt")
         
@@ -77,6 +75,7 @@ class WorkerThread(threading.Thread):
             elif self.behavier[i]['api'] == 'accept' or self.behavier[i]['api'] == 'reject':
                 self.topic = f'foxlink/users/{self.username}/missions'
                 self.mqtt(self.behavier[i]['api'])
+                time.sleep(1)
                 
                 if self.mission_id != 0:
                     status = mission_action(self.token, self.mission_id, self.behavier[i]['api'], self.username)
@@ -86,6 +85,7 @@ class WorkerThread(threading.Thread):
                 if self.behavier[i -1]['api'] == 'start':
                     self.topic = f'foxlink/users/{self.username}/move-rescue-station'
                     self.mqtt(self.behavier[i]['api'])
+                    time.sleep(1)
                     if self.mission_id != 0:
                         status = mission_action(self.token, self.mission_id, self.behavier[i]['api'], self.username)
                 else:
@@ -105,6 +105,7 @@ class WorkerThread(threading.Thread):
 
             if status and status >= 200 and status <= 299:
                 i += 1
-                time.sleep(0.1)
             else:
+                if self.client:
+                    self.client.loop_stop()
                 time.sleep(10)

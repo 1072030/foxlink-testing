@@ -156,3 +156,9 @@ print('\n\n========== NOT ASSIGNED MISSIONS ==========')
 print(pd.DataFrame(not_assign_mission).drop(columns=[0,2,3,4,5,6,7,8,10,11]))
 
 print(sum(period))
+
+# SELECT m.created_date as created , a.created_date as assign, a.created_date - m.created_date as time from foxlink.missions m 
+# inner join foxlink.auditlogheaders a  on m.id = a.record_pk and a.`action` = "MISSION_ASSIGNED"
+
+# select sum(time), count(time), sum(time)/count(time) as avg from (SELECT m.created_date as created , a.created_date as assign, a.created_date - m.created_date as time from foxlink.missions m 
+# inner join foxlink.auditlogheaders a  on m.id = a.record_pk and a.`action` = "MISSION_ASSIGNED") as temp

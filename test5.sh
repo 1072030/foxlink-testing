@@ -1,11 +1,24 @@
+#
+TIME_FULL="$(date --date='5 minute' +'%Y-%m-%d %H:%M:%S')"
+TIME_H_M="$(date --date='5 minute' +'%H:%M')"
+
+# Step0
+bash server_exec.sh \
+"cd /home/ntust-foxlink/foxlink/foxlink-api-backend/;\
+ sed -i 's/DAY_SHIFT_END=.*/DAY_SHIFT_END=$TIME_H_M/' ntust.env;\
+ bash ./update.sh"
+ 
+echo "Backend container restarted"
+
 # Step1
 # Clean the database and wait til backend's restart process done
 bash clean.sh
 sleep 5
+echo "Server Clean up process complete"
 
 # Step2 
 # Run the script to test Login Logout
-python app/utils/create_time.py -f test5 -s '2022-11-13 12:12:00'  # 重新設定測項 Json 檔內容
+python app/utils/create_time.py -f test5 -s "$TIME_FULL"  # 重新設定測項 Json 檔內容
 cp app/env_template.py app/env.py
 sed -i 's/test.json/test5.json/' app/env.py # 設定要執行的 Json 檔名
 docker-compose up -d --build foxlinkevent # 執行輸入 foxlinkevent 的 container

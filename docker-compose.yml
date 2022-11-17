@@ -35,6 +35,28 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
+  autocreate:
+    build:
+      context: .
+      dockerfile: autocreate.Dockerfile
+    depends_on:
+      - mysql
+    networks:
+      - backend
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  autoworker:
+    build:
+      context: .
+      dockerfile: autoworker.Dockerfile
+    depends_on:
+      - mysql
+    networks:
+      - backend
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
   mysql:
     image: mysql:8
     restart: unless-stopped

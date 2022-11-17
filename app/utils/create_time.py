@@ -39,7 +39,7 @@ class CreateTime():
         return self.data
 
     # 異常發生時間隨機產生;test3
-    def random_start_time(self, break_time=180, end_time=180):
+    def random_start_time(self, break_time=300, end_time=600):
         '''
         break_time: 多久時間內機台皆發生異常(預設5分鐘)。單位:秒
         end_time: 異常發生後，過多久解除(10分鐘)  單位:秒
@@ -192,8 +192,9 @@ def main(test_filename,start=30, disconn=30, conn_time=60, shift_time="2022-10-1
 parser = argparse.ArgumentParser()
 parser.add_argument("-f", "--filename", required=True)
 parser.add_argument("-s", "--shift")
+parser.add_argument("-b", "--break_time")
 args = parser.parse_args()
-main(test_filename=args.filename, shift_time=args.shift) 
+main(test_filename=args.filename, shift_time=args.shift, break_time=args.break_time) 
 
 # test 5, 除檔名外,測試時要改換班時間
 # main("test5", shift_time="2022-10-16 22:50:00") 

@@ -113,12 +113,13 @@ for i in range(1, USER_NUMBER + 1):
     elif i >= 87 and i <= 91:
         if result_user[name]['assign'] and result_user[name]['reject_count'] >= 2:
             result_user[name]['is_correct'] = True
-            period.append((result_user[name]['assign'] - result_user[name]['reject']) / pd.Timedelta(seconds=1))
+            # period.append((result_user[name]['assign'] - result_user[name]['reject']) / pd.Timedelta(seconds=1))
 
 answer_user = pd.DataFrame.from_dict(result_user, orient='index').drop(columns=['reject_count'], axis=1)
 print('\n\n========== USER BASE ==========\n\n')
 print(answer_user.to_string())
 
+print(period)
 print('\n\n========== USER REJECT -> ASSIGNED ==========\n\n')
 print(sum(period) / len(period))
 
