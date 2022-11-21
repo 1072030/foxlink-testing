@@ -73,7 +73,7 @@ class WorkerThread(Process):
             action = self.behavier[i]['api']
             response_time = self.behavier[i]['response_time']
             timeout = 60 # seconds
-            self.logger.info(f"begin to {action} with timeout:{timeout}")
+            self.logger.info(f"action:{action} begin to with timeout({timeout})")
             if action == 'login':
                 status, self.token = login(self.username,timeout)
 
