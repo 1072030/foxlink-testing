@@ -8,10 +8,14 @@ from app.env import MQTT_BROKER, MQTT_PORT
 from paho.mqtt import client as mqtt_client
 from datetime import datetime
 import time, json, logging
+from multiprocessing import Process
+logging.basicConfig(level=logging.INFO)
 
-class WorkerThread(threading.Thread):
+# class WorkerThread(threading.Thread):
+class WorkerThread(Process):
     def __init__(self, username, behavier):
-        threading.Thread.__init__(self)
+        super(WorkerThread,self).__init__()
+        self.logger = logging.getLogger(username)
         self.username = username
         self.behavier = behavier
         self.token = None
@@ -23,7 +27,7 @@ class WorkerThread(threading.Thread):
 
         def on_subscribe(client, userdata, flags, rc):
             pass
-            # logging.warning(f"client subscribe = {self.username}")
+            # self.logger.warning(f"client subscribe = {self.username}")
 
         def on_message(client, userdata, msg):
 
@@ -32,7 +36,7 @@ class WorkerThread(threading.Thread):
             self.mission_id = json.loads(info)['mission_id']
             retain = msg.retain
 
-            logging.warn(f"on_message:{self.username} {self.mission_id} {retain}")
+            self.logger.warn(f"on_message:{self.username} {self.mission_id} {retain}")
 
             create_log(
                 param = {
@@ -60,51 +64,49 @@ class WorkerThread(threading.Thread):
                 self.client.on_subscribe = on_subscribe
                 self.client.loop_start()
         except:
-            logging.warning(f"{self.username} can't connect mqtt")
+            self.logger.warning(f"{self.username} can't connect mqtt")
         
     def run(self):
         i = 0
         while i < len(self.behavier):
             status = None
-            if self.behavier[i]['api'] == 'login':
-                time.sleep(self.behavier[i]['response_time'])
-                status, self.token = login(self.username)
+            action = self.behavier[i]['api']
+            response_time = self.behavier[i]['response_time']
+            timeout = 60 # seconds
+            self.logger.info(f"begin to {action} with timeout:{timeout}")
+            if action == 'login':
+                status, self.token = login(self.username,timeout)
 
-            elif self.behavier[i]['api'] == 'logout':
-                time.sleep(self.behavier[i]['response_time'])
-                status = logout(self.token, self.username)
-
-            elif self.behavier[i]['api'] == 'accept' or self.behavier[i]['api'] == 'reject':
+            elif action == 'logout':
+                status = logout(self.token,self.username,timeout=timeout)
+               
+            elif action in ['accept', 'reject']:
                 self.topic = f'foxlink/users/{self.username}/missions'
-                self.mqtt(self.behavier[i]['api'])
+                self.mqtt(action)
                 
-                if self.mission_id != 0:
-                    status = mission_action(self.token, self.mission_id, self.behavier[i]['api'], self.username)
+                while self.mission_id == 0:
+                    self.logger.info(f"Waiting the MQTT message for action:{action}")
+                    time.sleep(10)
 
-            elif self.behavier[i]['api'] == 'start':
-                time.sleep(self.behavier[i]['response_time'])
-                if self.behavier[i -1]['api'] == 'start':
-                    self.topic = f'foxlink/users/{self.username}/move-rescue-station'
-                    self.mqtt(self.behavier[i]['api'])
-                    if self.mission_id != 0:
-                        status = mission_action(self.token, self.mission_id, self.behavier[i]['api'], self.username)
-                else:
-                    status = mission_action(self.token, self.mission_id, self.behavier[i]['api'], self.username)
+                status = mission_action(self.token, self.mission_id, action, self.username,timeout=timeout)
 
-            # create_log(
-            #     param = {
-            #         'mission_id': NULL,
-            #         'mqtt': '',
-            #         'username': self.username,
-            #         'action': self.behavier[i]['api'],
-            #         'description': f'{i} {status}',
-            #         'mqtt_detail': '',
-            #         'time': datetime.now(),
-            #     }
-            # )
+            elif action == 'start' and self.behavier[i - 1]['api'] == 'start':
+                self.topic = f'foxlink/users/{self.username}/move-rescue-station'
+                self.mqtt(action)
+
+                while self.mission_id == 0:
+                    self.logger.info(f"Waiting the MQTT message for action:{action}")
+                    time.sleep(5)
+
+            elif action in ['start', 'finish']:
+                status = mission_action(self.token, self.mission_id, action, self.username,timeout=timeout)
+
+            self.logger.info(f"ended {action} with status:{status}")
 
             if status and status >= 200 and status <= 299:
+                self.logger.info(f"action:{action} completed.")
                 i += 1
-                time.sleep(0.1)
-            else:
-                time.sleep(10)
+
+            time.sleep(response_time)
+
+        self.logger.info("completed all tasks, leaving")

@@ -1,21 +1,33 @@
-from asyncio import events
 from pydantic import Json
 from sqlalchemy import MetaData, create_engine
-import datetime
+from datetime import timedelta, datetime
+from typing import Optional, List, ForwardRef
+from enum import Enum
+from ormar import property_field, pre_update
+from sqlalchemy import MetaData, create_engine
+from sqlalchemy.sql import func
 import databases
 import ormar
+import sqlalchemy
+import uuid
+import asyncio
 from app.env import (
-    DATABASE_HOST,
-    DATABASE_PORT,
-    DATABASE_USER,
-    DATABASE_PASSWORD,
-    DATABASE_NAME
+    FOXLINK_DATABASE_HOST,
+    FOXLINK_DATABASE_PORT,
+    FOXLINK_DATABASE_USER,
+    FOXLINK_DATABASE_PASSWORD,
+    FOXLINK_DATABASE_NAME,
 )
 
-DATABASE_URI = f"mysql://{DATABASE_USER}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_NAME}"
+DATABASE_URI = f"mysql://{FOXLINK_DATABASE_USER}:{FOXLINK_DATABASE_PASSWORD}@{FOXLINK_DATABASE_HOST}:{FOXLINK_DATABASE_PORT}/{FOXLINK_DATABASE_NAME}"
 
-database = databases.Database(DATABASE_URI)
+database = databases.Database(DATABASE_URI, max_size=7)
+
 metadata = MetaData()
+
+MissionRef = ForwardRef("Mission")
+
+AuditLogHeaderRef = ForwardRef("AuditLogHeader")
 
 class MainMeta(ormar.ModelMeta):
     metadata = metadata
@@ -49,8 +61,3 @@ class TestingLog(ormar.Model):
     description: str = ormar.String(max_length=200, nullable=True)
     mqtt_detail = ormar.Text(nullable=True)
     time: datetime = ormar.DateTime(nullable=True)
-
-
-engine = create_engine(DATABASE_URI)
-
-metadata.create_all(engine)

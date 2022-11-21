@@ -6,8 +6,10 @@ from app.env import SERVER_URL
 from app.services.log import create_log, kill_process
 from datetime import datetime
 
-def login(username):
+def login(username,timeout=60,logger=logging):
     status = None
+    token = None
+
     payloads = {
         'username': username,
         'password': 'foxlink'
@@ -26,16 +28,17 @@ def login(username):
     )
 
     try:
-        r = requests.post(f'{SERVER_URL}/auth/token',data=payloads, timeout=120)
+        r = requests.post(f'{SERVER_URL}/auth/token',data=payloads, timeout=timeout)
         token = r.json()['access_token']
         status = r.status_code
+
     except Exception as e:
-        logging.warning(f"{username} can't loging")
-        logging.warning(e)
-        token = None
+        logger.warning(f"can't login, exception occur.")
+        logger.warning(e)
+
     return status, token
 
-def logout(token, username, reason='OffWork'):
+def logout(token, username, reason='OffWork',timeout=60,logger=logging):
     status = None
     header = {
         'Authorization': f'Bearer {token}',
@@ -55,35 +58,47 @@ def logout(token, username, reason='OffWork'):
     )
 
     try:
-        r = requests.post(f'{SERVER_URL}/users/get-off-work?reason={reason}', headers=header, timeout=120)
+        r = requests.post(f'{SERVER_URL}/users/get-off-work?reason={reason}', headers=header, timeout=timeout)
         status = r.status_code
+
     except Exception as e:
-        logging.warning(f"{username} can't logout")
-        logging.warning(e)
+        logger.warning(f"can't logout, exception occur.")
+        logger.warning(e)
+
     return status
 
-def mission_action(token, mission_id, action, username):
+def mission_action(token, mission_id, action, username,timeout=60,logger=logging):
     status = None
+    result = None
     header = {
         'Authorization': f'Bearer {token}',
         'accept': 'application/json'
     }
     try:
         if action == 'reject':
-            r = requests.get(f'{SERVER_URL}/missions/{mission_id}/reject', headers=header)
+            r = requests.get(f'{SERVER_URL}/missions/{mission_id}/reject', headers=header,timeout=timeout)
         elif action == 'start':
-            r = requests.post(f'{SERVER_URL}/missions/{mission_id}/start', headers=header)
+            r = requests.post(f'{SERVER_URL}/missions/{mission_id}/start', headers=header,timeout=timeout)
         elif action == 'accept':
-            r = requests.post(f'{SERVER_URL}/missions/{mission_id}/accept', headers=header)
+            r = requests.post(f'{SERVER_URL}/missions/{mission_id}/accept', headers=header,timeout=timeout)
+        elif action == "finish":
+            r = requests.post(f'{SERVER_URL}/missions/{mission_id}/finish', headers=header, timeout=timeout)
+        else:
+            logger.warning(f"[mission action]unknown action: {action}")
+
         status = r.status_code
-    except:
-        logging.warning(f"{username} can't {action}")
+        
+    except Exception as e:
+        logger.warning(f"can't perform action({action}), exception occur.")
+        logger.info(e)
 
     try:
         result = json.dumps(r.json())
-    except:
-        logging.warning(f"{username} can't dumps {action}")
-        result = None
+
+    except Exception as e:
+        logger.warning(f"can't dump result of action({action}), exception occur.")
+        logger.info(e)
+
 
     create_log(
         param = {
@@ -97,28 +112,5 @@ def mission_action(token, mission_id, action, username):
         }
     )
 
-    if status == 200 and action == 'start':
-        while True:
-            try:
-                f = requests.post(f'{SERVER_URL}/missions/{mission_id}/finish', headers=header)
-                result = json.dumps(f.json())
-                create_log(
-                    param = {
-                        'mission_id': mission_id,
-                        'mqtt': '',
-                        'username': username,
-                        'action': 'finish',
-                        'description': f'API_{f.status_code}',
-                        'mqtt_detail': f'{result}',
-                        'time': datetime.now(),
-                    }
-                )
-                if f.status_code != 200:
-                    time.sleep(30)
-                else:
-                    break
-            except:
-                logging.warning(f"{username} can't finish")
-                result = None
-
+   
     return status

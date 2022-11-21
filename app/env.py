@@ -1,21 +1,26 @@
-import json, os
+import json
+import os
+from dotenv import load_dotenv
+
+load_dotenv(".env")
 
 CURRENT_PATH = os.getcwd()
-SCENARIO = 'test3.json'
 
-with open(f'{CURRENT_PATH}/app/scenario/{SCENARIO}') as jsonfile:
-    testLogining_data = json.load(jsonfile)
-    jsonfile.close()
+FOXLINK_DATABASE_HOST = os.getenv("FOXLINK_DATABASE_HOST")
+FOXLINK_DATABASE_PORT = os.getenv("FOXLINK_DATABASE_PORT")
+FOXLINK_DATABASE_USER = os.getenv("FOXLINK_DATABASE_USER")
+FOXLINK_DATABASE_PASSWORD = os.getenv("FOXLINK_DATABASE_PASSWORD")
+FOXLINK_DATABASE_NAME = os.getenv("FOXLINK_DATABASE_NAME")
 
-THREAD_NUMBER = len(testLogining_data['worker_behavier'])
-WORKER = testLogining_data['worker_behavier']
-FOXLINK_EVENT = testLogining_data['foxlinkEvent']
-DATABASE_HOST = 'mysql'
-DATABASE_PORT = '3306'
-DATABASE_USER = 'root'
-DATABASE_PASSWORD = '123456'
-DATABASE_NAME = 'foxlink'
-MQTT_BROKER = '140.118.157.9'
-MQTT_PORT = 1883
-SERVER_URL = "http://140.118.157.9:8080"
-TESTING_LOG = True
+API_DATABASE_HOST = os.getenv("API_DATABASE_HOST")
+API_DATABASE_PORT = os.getenv("API_DATABASE_PORT")
+API_DATABASE_USER = os.getenv("API_DATABASE_USER")
+API_DATABASE_PASSWORD = os.getenv("API_DATABASE_PASSWORD")
+API_DATABASE_NAME = os.getenv("API_DATABASE_NAME")
+
+MQTT_BROKER = os.getenv("MQTT_BROKER")
+MQTT_PORT = int(os.getenv("MQTT_PORT"))
+
+SERVER_URL = os.getenv("SERVER_URL")
+
+TESTING_LOG = bool(os.getenv("TESTING_LOG"))

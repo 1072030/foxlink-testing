@@ -3,7 +3,7 @@ from datetime import datetime
 import logging
 from app.core.database import TestingLog, database
 import mysql.connector
-from app.env import DATABASE_HOST, DATABASE_PASSWORD, DATABASE_USER, DATABASE_NAME, TESTING_LOG
+from app.env import FOXLINK_DATABASE_HOST, FOXLINK_DATABASE_PASSWORD, FOXLINK_DATABASE_USER, FOXLINK_DATABASE_NAME, TESTING_LOG
 
 
 async def log(param, sem):
@@ -22,10 +22,10 @@ def create_log(param):
     if TESTING_LOG:
         try:
             CONNECTION = mysql.connector.connect(
-            host = DATABASE_HOST,
-            database = DATABASE_NAME,
-            user = DATABASE_USER,
-            password = DATABASE_PASSWORD)
+            host = FOXLINK_DATABASE_HOST,
+            database = FOXLINK_DATABASE_NAME,
+            user = FOXLINK_DATABASE_USER,
+            password = FOXLINK_DATABASE_PASSWORD)
             
             cursor = CONNECTION.cursor()
 
