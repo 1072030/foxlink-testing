@@ -90,8 +90,8 @@ for index, row in table_audit.iterrows():
         result_user[row['user']]['mission_id'].append(row['record_pk'])
         
 for index, row in table_mission.iterrows():
-    result_user[row['user']]['repair_start_date'].append(row['event_start_date'])
-    result_user[row['user']]['repair_end_date'].append(row['event_end_date'])
+    result_user[row['user']]['repair_start_date'].append(row['repair_start_date'])
+    result_user[row['user']]['repair_end_date'].append(row['repair_end_date'])
     
 for i in range(1, USER_NUMBER + 1):
     name = 'C0{}'.format(str(i).zfill(3))

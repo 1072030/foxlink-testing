@@ -67,7 +67,9 @@ for i in range(1, USER_NUMBER + 1):
         'repair_end_date': None,
         'mission_id': None,
         'is_correct': False,
-        'reject_count': 0
+        'reject_count': 0,
+        'reject_list': [],
+        'assign_list': []
     }
 
 for index, row in table_log.iterrows():
@@ -81,11 +83,13 @@ for index, row in table_log.iterrows():
         result_user[row['username']]['start'] = row['time']
     elif row['action'] == 'reject' and row['description'] == 'API_200':
         result_user[row['username']]['reject'] = row['time']
+        result_user[row['username']]['reject_list'].append(row['time'])
         result_user[row['username']]['reject_count'] += 1
         
 for index, row in table_audit.iterrows():
     if row['action'] == 'MISSION_ASSIGNED':
         result_user[row['user']]['assign'] = row['created_date']
+        result_user[row['user']]['assign_list'].append(row['created_date'])
         result_user[row['user']]['mission_id'] = row['record_pk']
         
 for index, row in table_mission.iterrows():
@@ -113,13 +117,13 @@ for i in range(1, USER_NUMBER + 1):
     elif i >= 87 and i <= 91:
         if result_user[name]['assign'] and result_user[name]['reject_count'] >= 2:
             result_user[name]['is_correct'] = True
-            # period.append((result_user[name]['assign'] - result_user[name]['reject']) / pd.Timedelta(seconds=1))
+            for j in range(len(result_user[name]['reject_list']) - 1):
+                period.append((result_user[name]['assign_list'][j + 1] - result_user[name]['reject_list'][j]) / pd.Timedelta(seconds=1))
 
-answer_user = pd.DataFrame.from_dict(result_user, orient='index').drop(columns=['reject_count'], axis=1)
+answer_user = pd.DataFrame.from_dict(result_user, orient='index').drop(columns=['reject_count', 'reject_list', 'assign_list'], axis=1)
 print('\n\n========== USER BASE ==========\n\n')
 print(answer_user.to_string())
 
-print(period)
 print('\n\n========== USER REJECT -> ASSIGNED ==========\n\n')
 print(sum(period) / len(period))
 

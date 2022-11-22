@@ -192,7 +192,7 @@ def main(test_filename,start=30, disconn=30, conn_time=60, shift_time="2022-10-1
 parser = argparse.ArgumentParser()
 parser.add_argument("-f", "--filename", required=True)
 parser.add_argument("-s", "--shift")
-parser.add_argument("-b", "--break_time")
+parser.add_argument("-b", "--break_time", type=int)
 args = parser.parse_args()
 main(test_filename=args.filename, shift_time=args.shift, break_time=args.break_time) 
 

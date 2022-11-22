@@ -140,9 +140,9 @@ for index, row in table_mission.iterrows():
         'is_correcct': True if mission[row['mission']]['is_accept'] else False
     }
 
-# answer_mission = pd.DataFrame.from_dict(result_mission, orient='index')
-# print('\n\n========== MISSION BASE ==========\n\n')
-# print(answer_mission.to_string())
+answer_mission = pd.DataFrame.from_dict(result_mission, orient='index')
+print('\n\n========== MISSION BASE ==========\n\n')
+print(answer_mission.to_string())
 
 print('\n\n========== MISSION ASSIGN -> ACCEPTED AVG ==========')
 print(sum(period) / len(period))

@@ -10,7 +10,7 @@ from datetime import datetime
 import time, json, logging
 
 class WorkerThread(threading.Thread):
-    def __init__(self, username, behavier):
+    def __init__(self, username, behavier, id):
         threading.Thread.__init__(self)
         self.username = username
         self.behavier = behavier
@@ -18,6 +18,7 @@ class WorkerThread(threading.Thread):
         self.mission_id = 0
         self.topic = None
         self.client = None
+        self.id = id
 
     def mqtt(self, action):
 
@@ -66,30 +67,36 @@ class WorkerThread(threading.Thread):
             status = None
             if self.behavier[i]['api'] == 'login':
                 time.sleep(self.behavier[i]['response_time'])
-                status, self.token = login(self.username)
+                status, self.token = login(self.username, self.id)
 
             elif self.behavier[i]['api'] == 'logout':
                 time.sleep(self.behavier[i]['response_time'])
                 status = logout(self.token, self.username)
 
             elif self.behavier[i]['api'] == 'accept' or self.behavier[i]['api'] == 'reject':
+                self.mission_id = 0
                 self.topic = f'foxlink/users/{self.username}/missions'
                 self.mqtt(self.behavier[i]['api'])
                 time.sleep(1)
                 
                 if self.mission_id != 0:
+                    time.sleep(self.behavier[i]['response_time'])
                     status = mission_action(self.token, self.mission_id, self.behavier[i]['api'], self.username)
 
             elif self.behavier[i]['api'] == 'start':
-                time.sleep(self.behavier[i]['response_time'])
-                if self.behavier[i -1]['api'] == 'start':
+                if self.behavier[i -1]['api'] == 'finish' or self.behavier[i -1]['api'] == 'login':
                     self.topic = f'foxlink/users/{self.username}/move-rescue-station'
                     self.mqtt(self.behavier[i]['api'])
                     time.sleep(1)
                     if self.mission_id != 0:
+                        time.sleep(self.behavier[i]['response_time'])
                         status = mission_action(self.token, self.mission_id, self.behavier[i]['api'], self.username)
                 else:
+                    time.sleep(self.behavier[i]['response_time'])
                     status = mission_action(self.token, self.mission_id, self.behavier[i]['api'], self.username)
+            elif self.behavier[i]['api'] == 'finish':
+                time.sleep(self.behavier[i]['response_time'])
+                status = mission_action(self.token, self.mission_id, self.behavier[i]['api'], self.username)
 
             # create_log(
             #     param = {

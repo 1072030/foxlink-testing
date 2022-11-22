@@ -3,6 +3,7 @@ TIME_FULL="$(date --date='5 minute' +'%Y-%m-%d %H:%M:%S')"
 TIME_H_M="$(date --date='5 minute' +'%H:%M')"
 
 # Step0
+python app/utils/delete.py # 清除資料庫
 bash server_exec.sh \
 "cd /home/ntust-foxlink/foxlink/foxlink-api-backend/;\
  sed -i 's/DAY_SHIFT_END=.*/DAY_SHIFT_END=$TIME_H_M/' ntust.env;\

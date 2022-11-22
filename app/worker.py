@@ -8,7 +8,7 @@ if __name__ == '__main__':
     worker_thread = []
 
     for i in range(THREAD_NUMBER):
-        worker_thread.append(WorkerThread(WORKER[i]['username'],  WORKER[i]['behavier']))
+        worker_thread.append(WorkerThread(WORKER[i]['username'],  WORKER[i]['behavier'], i))
         worker_thread[i].start()
     
     for i in range(THREAD_NUMBER):

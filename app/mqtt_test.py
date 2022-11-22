@@ -44,7 +44,7 @@ def subscribe(client_id, username, action, response_time):
     client.loop_start()
     return mission_id
 
-subscribe(str(uuid.uuid4()), 'C0055', 'hello', 1)
+subscribe(str(uuid.uuid4()), 'C0077', 'hello', 1)
 
 while True:
     time.sleep(10)

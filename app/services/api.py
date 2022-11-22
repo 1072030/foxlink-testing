@@ -11,7 +11,7 @@ def login(username, id):
     payloads = {
         'username': username,
         'password': 'foxlink',
-        # 'client_id': id
+        'client_id': id
     }
 
     create_log(
@@ -30,6 +30,17 @@ def login(username, id):
         r = requests.post(f'{SERVER_URL}/auth/token',data=payloads, timeout=120)
         token = r.json()['access_token']
         status = r.status_code
+        create_log(
+            param = {
+                'mission_id': NULL,
+                'mqtt': '',
+                'username': username,
+                'action': 'login',
+                'description': f'API_{status}',
+                'mqtt_detail': f'{json.dumps(r.json())}',
+                'time': datetime.now(),
+            }
+        )
     except Exception as e:
         logging.warning(f"{username} can't login")
         logging.warning(e)
@@ -58,6 +69,17 @@ def logout(token, username, reason='OffWork'):
     try:
         r = requests.post(f'{SERVER_URL}/users/get-off-work?reason={reason}', headers=header, timeout=120)
         status = r.status_code
+        create_log(
+            param = {
+                'mission_id': NULL,
+                'mqtt': '',
+                'username': username,
+                'action': 'logout',
+                'description': f'API_{status}',
+                'mqtt_detail': f'{json.dumps(r.json())}, token: {token}',
+                'time': datetime.now(),
+            }
+        )
     except Exception as e:
         logging.warning(f"{username} can't logout")
         logging.warning(e)
@@ -99,29 +121,5 @@ def mission_action(token, mission_id, action, username):
             'time': datetime.now(),
         }
     )
-
-    if status == 200 and action == 'start' and SCENARIO == "test3.json":
-        while True:
-            try:
-                f = requests.post(f'{SERVER_URL}/missions/{mission_id}/finish', headers=header)
-                result = json.dumps(f.json())
-                create_log(
-                    param = {
-                        'mission_id': mission_id,
-                        'mqtt': '',
-                        'username': username,
-                        'action': 'finish',
-                        'description': f'API_{f.status_code}',
-                        'mqtt_detail': f'{result}',
-                        'time': datetime.now(),
-                    }
-                )
-                if f.status_code != 200:
-                    time.sleep(30)
-                else:
-                    break
-            except:
-                logging.warning(f"{username} can't finish")
-                result = None
 
     return status

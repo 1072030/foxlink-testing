@@ -1,4 +1,5 @@
 # Step0
+python app/utils/delete.py # 清除資料庫
 bash server_exec.sh \
 "cd /home/ntust-foxlink/foxlink/foxlink-api-backend/;\
  bash ./update.sh"
