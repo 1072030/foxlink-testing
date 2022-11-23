@@ -11,7 +11,7 @@ class WorkerThread(threading.Thread):
     def __init__(self, user_id):
         threading.Thread.__init__(self)
         self.username = None
-        self.user_id = user_id + 2
+        self.user_id = user_id + 1
         self.shift_type = None
         self.token = None
         self.mission_id = None
@@ -83,45 +83,52 @@ class WorkerThread(threading.Thread):
         def on_message(client, userdata, msg):
             info = msg.payload.decode()
             topic = msg.topic
-            self.mission_id = json.loads(info)['mission_id']
+            mission_id = json.loads(info)['mission_id']
+            
+            is_diff_mission = True
+            if self.mission_id == mission_id:
+                is_diff_mission = False
 
-            logging.warn(f"on_message:{self.username} {topic} {self.mission_id}")
+            if is_diff_mission:
+                self.mission_id = mission_id
 
-            create_log(
-                param = {
-                    'mission_id': self.mission_id,
-                    'mqtt': topic,
-                    'username': self.username,
-                    'action': '',
-                    'description': f'receive_mqtt',
-                    'mqtt_detail': info,
-                    'time': datetime.now(),
-                }
-            )
+                logging.warn(f"on_message:{self.username} {topic} {self.mission_id}")
 
-            if topic == self.topic_mission:
-                action = self.get_action()
-                if action == "accept":
-                    self.take_action("accept")
+                create_log(
+                    param = {
+                        'mission_id': self.mission_id,
+                        'mqtt': topic,
+                        'username': self.username,
+                        'action': '',
+                        'description': f'receive_mqtt',
+                        'mqtt_detail': info,
+                        'time': datetime.now(),
+                    }
+                )
+
+                if topic == self.topic_mission:
+                    action = self.get_action()
+                    if action == "accept":
+                        self.take_action("accept")
+                        self.take_action("start")
+                        self.take_action("finish")
+                    elif action == "reject":
+                        self.take_action("reject")
+                    else:
+                        create_log(
+                            param = {
+                                'mission_id': self.mission_id,
+                                'mqtt': topic,
+                                'username': self.username,
+                                'action': 'no_action',
+                                'description': f'receive_mqtt',
+                                'mqtt_detail': info,
+                                'time': datetime.now(),
+                            }
+                        )
+
+                elif topic == self.topic_rescue:
                     self.take_action("start")
-                    self.take_action("finish")
-                elif action == "reject":
-                    self.take_action("reject")
-                else:
-                    create_log(
-                        param = {
-                            'mission_id': self.mission_id,
-                            'mqtt': topic,
-                            'username': self.username,
-                            'action': 'no_action',
-                            'description': f'receive_mqtt',
-                            'mqtt_detail': info,
-                            'time': datetime.now(),
-                        }
-                    )
-
-            elif topic == self.topic_rescue:
-                self.take_action("start")
         
         try:
             self.client = mqtt_client.Client(self.username)

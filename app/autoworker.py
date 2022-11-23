@@ -1,6 +1,6 @@
 from app.services.worker_thread import WorkerThread
 
-THREAD_NUMBER = 59
+THREAD_NUMBER = 66
 
 if __name__ == '__main__':
     worker_thread = []
