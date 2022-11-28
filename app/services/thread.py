@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.INFO)
 
 # class WorkerThread(threading.Thread):
 class WorkerThread(Process):
-    def __init__(self, username, behavier):
+    def __init__(self, username, behavier, id):
         super(WorkerThread,self).__init__()
         self.logger = logging.getLogger(username)
         self.username = username
@@ -22,12 +22,35 @@ class WorkerThread(Process):
         self.mission_id = 0
         self.topic = None
         self.client = None
+        self.id = id
+
 
     def mqtt(self, action):
+        create_log(
+            param = {
+                'mission_id': NULL,
+                'mqtt': f'{self.topic}',
+                'username': self.username,
+                'action': action,
+                'description': f'listening',
+                'mqtt_detail': '',
+                'time': datetime.now(),
+            }
+        )
 
         def on_subscribe(client, userdata, flags, rc):
-            pass
-            # self.logger.warning(f"client subscribe = {self.username}")
+            self.logger.warning(f"client subscribe = {self.username}")
+            create_log(
+                param = {
+                    'mission_id': NULL,
+                    'mqtt': '',
+                    'username': self.username,
+                    'action': action,
+                    'description': f'subscribe',
+                    'mqtt_detail': '',
+                    'time': datetime.now(),
+                }
+            )
 
         def on_message(client, userdata, msg):
 
@@ -65,6 +88,17 @@ class WorkerThread(Process):
                 self.client.loop_start()
         except:
             self.logger.warning(f"{self.username} can't connect mqtt")
+            create_log(
+                param = {
+                    'mission_id': NULL,
+                    'mqtt': '',
+                    'username': self.username,
+                    'action': action,
+                    'description': f"can't connect mqtt",
+                    'mqtt_detail': '',
+                    'time': datetime.now(),
+                }
+            )
         
     def run(self):
         i = 0
@@ -72,13 +106,15 @@ class WorkerThread(Process):
             status = None
             action = self.behavier[i]['api']
             response_time = self.behavier[i]['response_time']
-            timeout = 60 # seconds
+            timeout = 10 # seconds
             self.logger.info(f"action:{action} begin to with timeout({timeout})")
+
+            time.sleep(response_time)
             if action == 'login':
-                status, self.token = login(self.username,timeout,logger=self.logger)
+                status, self.token = login(self.username,self.id,timeout)
 
             elif action == 'logout':
-                status = logout(self.token,self.username,timeout=timeout,logger=self.logger)
+                status = logout(self.token,self.username,timeout=timeout)
                
             elif action in ['accept', 'reject']:
                 self.topic = f'foxlink/users/{self.username}/missions'
@@ -86,9 +122,9 @@ class WorkerThread(Process):
                 
                 while self.mission_id == 0:
                     self.logger.info(f"Waiting the MQTT message for action:{action}")
-                    time.sleep(10)
+                    time.sleep(5)
 
-                status = mission_action(self.token, self.mission_id, action, self.username,timeout=timeout,logger=self.logger)
+                status = mission_action(self.token, self.mission_id, action, self.username,timeout=timeout)
 
             elif action == 'start' and self.behavier[i - 1]['api'] == 'start':
                 self.topic = f'foxlink/users/{self.username}/move-rescue-station'
@@ -99,14 +135,12 @@ class WorkerThread(Process):
                     time.sleep(5)
 
             elif action in ['start', 'finish']:
-                status = mission_action(self.token, self.mission_id, action, self.username,timeout=timeout,logger=self.logger)
+                status = mission_action(self.token, self.mission_id, action, self.username,timeout=timeout)
 
             self.logger.info(f"ended {action} with status:{status}")
 
             if status and status >= 200 and status <= 299:
                 self.logger.info(f"action:{action} completed.")
                 i += 1
-
-            time.sleep(response_time)
 
         self.logger.info("completed all tasks, leaving")

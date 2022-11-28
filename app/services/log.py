@@ -1,7 +1,7 @@
 import asyncio, json
 from datetime import datetime
 import logging
-from app.core.database import TestingLog, database
+from app.services.database import TestingLog, database
 import mysql.connector
 from app.env import FOXLINK_DATABASE_HOST, FOXLINK_DATABASE_PASSWORD, FOXLINK_DATABASE_USER, FOXLINK_DATABASE_NAME, TESTING_LOG
 
@@ -22,10 +22,12 @@ def create_log(param):
     if TESTING_LOG:
         try:
             CONNECTION = mysql.connector.connect(
-            host = FOXLINK_DATABASE_HOST,
-            database = FOXLINK_DATABASE_NAME,
-            user = FOXLINK_DATABASE_USER,
-            password = FOXLINK_DATABASE_PASSWORD)
+                host = FOXLINK_DATABASE_HOST,
+                database = FOXLINK_DATABASE_NAME,
+                port = 27001,
+                user = FOXLINK_DATABASE_USER,
+                password = FOXLINK_DATABASE_PASSWORD
+            )
             
             cursor = CONNECTION.cursor()
 
@@ -35,9 +37,8 @@ def create_log(param):
             cursor.execute(mySql_insert_query)
             CONNECTION.commit()
             cursor.close()
-        except:
-            pass
-            # logging.warning(f"{param['username']} can't create log")
+        except Exception as e:
+            logging.warning(e)
     
 def kill_process():
     connection = mysql.connector.connect(

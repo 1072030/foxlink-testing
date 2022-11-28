@@ -1,11 +1,12 @@
 from datetime import datetime, timedelta
-from app.core.database import database, FoxlinkEvent
+from app.services.database import database, FoxlinkEvent
 import argparse
 import asyncio
 import json
+import time
 
 async def generator(events,i):
-    current_time =  datetime.now()
+    current_time =  datetime.now() - timedelta(hours=8)
     start_time = datetime.strptime(events[i]['start_time'], '%Y-%m-%d %H:%M:%S') - timedelta(hours=8)
     end_time = None if events[i]['end_time'] == '' else datetime.strptime(events[i]['end_time'], '%Y-%m-%d %H:%M:%S') - timedelta(hours=8)
     if current_time >= start_time and events[i]['status'] == 'create':
@@ -35,7 +36,7 @@ async def main_routine(args):
     scenario = None
     with open( f'./app/scenario/{args.json}.json') as file:
         scenario = json.load(file)
-        print(scenario)
+        # print(scenario)
         file.close()
     print(f"Scenario:{args.json} loaded")
 
@@ -44,7 +45,9 @@ async def main_routine(args):
     print("Num events:",event_number)
 
     print("Start Process.")
-    await  asyncio.gather(*[generator(events,i) for i in range(event_number)])
+    while True:
+        await  asyncio.gather(*[generator(events,i) for i in range(event_number)])
+        time.sleep(1)
     print("Process Done.")
     await database.disconnect()
 

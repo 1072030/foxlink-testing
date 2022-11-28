@@ -25,7 +25,7 @@ if __name__ == '__main__':
     worker_thread = []
     print(f"Creating Threads.")
     for i in range(thread_num):
-        worker_thread.append(WorkerThread(worker_behaviour[i]['username'], worker_behaviour[i]['behavier']))
+        worker_thread.append(WorkerThread(worker_behaviour[i]['username'], worker_behaviour[i]['behavier'], i))
         worker_thread[i].start()
     print(f"Running Threads.")
     for i in range(thread_num):

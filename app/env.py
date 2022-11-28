@@ -1,8 +1,6 @@
 import json
 import os
-from dotenv import load_dotenv
 
-load_dotenv(".env")
 
 CURRENT_PATH = os.getcwd()
 
@@ -12,15 +10,9 @@ FOXLINK_DATABASE_USER = os.getenv("FOXLINK_DATABASE_USER")
 FOXLINK_DATABASE_PASSWORD = os.getenv("FOXLINK_DATABASE_PASSWORD")
 FOXLINK_DATABASE_NAME = os.getenv("FOXLINK_DATABASE_NAME")
 
-API_DATABASE_HOST = os.getenv("API_DATABASE_HOST")
-API_DATABASE_PORT = os.getenv("API_DATABASE_PORT")
-API_DATABASE_USER = os.getenv("API_DATABASE_USER")
-API_DATABASE_PASSWORD = os.getenv("API_DATABASE_PASSWORD")
-API_DATABASE_NAME = os.getenv("API_DATABASE_NAME")
+SERVER_URL = os.getenv("SERVER_URL")
 
 MQTT_BROKER = os.getenv("MQTT_BROKER")
 MQTT_PORT = int(os.getenv("MQTT_PORT"))
-
-SERVER_URL = os.getenv("SERVER_URL")
 
 TESTING_LOG = bool(os.getenv("TESTING_LOG"))

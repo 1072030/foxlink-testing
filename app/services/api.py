@@ -6,13 +6,14 @@ from app.env import SERVER_URL
 from app.services.log import create_log, kill_process
 from datetime import datetime
 
-def login(username,timeout=60,logger=logging):
+def login(username, id,timeout=60,logger=logging):
     status = None
     token = None
 
     payloads = {
         'username': username,
-        'password': 'foxlink'
+        'password': 'foxlink',
+        'client_id': id
     }
 
     create_log(
