@@ -30,5 +30,5 @@ then
     db
     emqx
 else
-    echo "Unknown server to start..."
+    echo "Unknown server to clean..."
 fi

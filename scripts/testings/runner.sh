@@ -29,7 +29,8 @@ fi
 sleep 5
 # create time
 python -m app.utils.create_time -f $SCENARIO
-# run foxlinkevents
-python -m app.foxlinkevent $SCENARIO &
-# run test case
-python -m app.worker $SCENARIO
+# # run foxlinkevents
+# python -m app.foxlinkevent $SCENARIO &
+# # run test case
+# python -m app.worker $SCENARIO
+python -m app.execute $SCENARIO

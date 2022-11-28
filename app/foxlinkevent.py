@@ -39,7 +39,7 @@ async def main_routine(args):
         # print(scenario)
         file.close()
     print(f"Scenario:{args.json} loaded")
-
+    
     events = scenario['foxlinkEvent']
     event_number = len(events)
     print("Num events:",event_number)
@@ -51,8 +51,12 @@ async def main_routine(args):
     print("Process Done.")
     await database.disconnect()
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(dest='json')
     args = parser.parse_args()
     asyncio.run(main_routine(args))
+    
+if __name__ == "__main__":
+    main()
+   

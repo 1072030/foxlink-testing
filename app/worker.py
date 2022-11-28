@@ -3,14 +3,24 @@ from app.services.thread import WorkerThread
 import  argparse
 import logging
 import json
+import multiprocessing
+import signal
 
 logging.basicConfig(level=logging.DEBUG)
 
-if __name__ == '__main__':
+def cleanup_childrens(*args,**_args):
+    active = multiprocessing.active_children()
+    for p in active:
+        p.kill()
+    print(f"All Childrens Killed!!!(totally:{len(active)})")
+
+def main():
+    signal.signal(signal.SIGINT, cleanup_childrens)
+    signal.signal(signal.SIGTERM, cleanup_childrens)
+
     parser = argparse.ArgumentParser()
     parser.add_argument(dest='json')
     args = parser.parse_args()
-    
     worker_behaviour = None
     thread_num = 0
     with open(f'./app/scenario/{args.json}.json') as jsonfile:
@@ -33,3 +43,6 @@ if __name__ == '__main__':
     print(f"Workers Complete.")
     logging.warning("============= DONE ==============")
     logging.warning(datetime.now() - start_time)
+
+if __name__ == '__main__':
+    main()
