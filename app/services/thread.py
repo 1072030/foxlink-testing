@@ -117,7 +117,7 @@ class WorkerThread(Process):
                 status = logout(self.token,self.username,timeout=timeout)
                
             elif action in ['accept', 'reject']:
-                self.topic = f'foxlink/users/{self.username}/missions'
+                self.topic = f'foxlink/users/{self.id}/missions'
                 self.mqtt(action)
                 
                 while self.mission_id == 0:
@@ -127,7 +127,7 @@ class WorkerThread(Process):
                 status = mission_action(self.token, self.mission_id, action, self.username,timeout=timeout)
 
             elif action == 'start' and self.behavier[i - 1]['api'] == 'start':
-                self.topic = f'foxlink/users/{self.username}/move-rescue-station'
+                self.topic = f'foxlink/users/{self.id}/move-rescue-station'
                 self.mqtt(action)
 
                 while self.mission_id == 0:
