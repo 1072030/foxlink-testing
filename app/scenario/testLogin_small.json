@@ -1,0 +1,44 @@
+{
+    "worker_condition": "員工專職表_FQ-9車間_LoginTest.xlsx",
+    "foxlinkEvent": [],
+    "worker_behavier": [
+        {
+            "username": "C0001",
+            "behavier": [
+                {
+                    "api": "login",
+                    "response_time": 0
+                },
+                {
+                    "api": "logout",
+                    "response_time": 0
+                },
+                {
+                    "api": "login",
+                    "response_time": 0
+                },
+                {
+                    "api": "logout",
+                    "response_time": 0
+                },
+                {
+                    "api": "login",
+                    "response_time": 0
+                },
+                {
+                    "api": "logout",
+                    "response_time": 0
+                }
+            ]
+        }
+    ],
+    "network_status": {
+        "server_network": [
+            {
+                "status": "disconnect",
+                "start_time": "2022-11-01 17:11:50",
+                "end_time": "2022-11-01 17:12:50"
+            }
+        ]
+    }
+}

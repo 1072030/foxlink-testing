@@ -75,10 +75,10 @@ class WorkerThread(Process):
             timeout = 60 # seconds
             self.logger.info(f"action:{action} begin to with timeout({timeout})")
             if action == 'login':
-                status, self.token = login(self.username,timeout)
+                status, self.token = login(self.username,timeout,logger=self.logger)
 
             elif action == 'logout':
-                status = logout(self.token,self.username,timeout=timeout)
+                status = logout(self.token,self.username,timeout=timeout,logger=self.logger)
                
             elif action in ['accept', 'reject']:
                 self.topic = f'foxlink/users/{self.username}/missions'
@@ -88,7 +88,7 @@ class WorkerThread(Process):
                     self.logger.info(f"Waiting the MQTT message for action:{action}")
                     time.sleep(10)
 
-                status = mission_action(self.token, self.mission_id, action, self.username,timeout=timeout)
+                status = mission_action(self.token, self.mission_id, action, self.username,timeout=timeout,logger=self.logger)
 
             elif action == 'start' and self.behavier[i - 1]['api'] == 'start':
                 self.topic = f'foxlink/users/{self.username}/move-rescue-station'
@@ -99,7 +99,7 @@ class WorkerThread(Process):
                     time.sleep(5)
 
             elif action in ['start', 'finish']:
-                status = mission_action(self.token, self.mission_id, action, self.username,timeout=timeout)
+                status = mission_action(self.token, self.mission_id, action, self.username,timeout=timeout,logger=self.logger)
 
             self.logger.info(f"ended {action} with status:{status}")
 
