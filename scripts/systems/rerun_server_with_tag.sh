@@ -16,7 +16,8 @@ db(){
     bash scripts/systems/start_server.sh $1 $2
 }
 
-if [[ -z $2 ]]
+if [[ -z $2 ]];
+then
     echo "Commit name not specified..."
     exit -1
 fi

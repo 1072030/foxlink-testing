@@ -5,13 +5,15 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Module",
+            "name": "Python: Executor",
             "type": "python",
             "request": "launch",
             "module": "app.execute",
             "justMyCode": true,
             "args": [
-                "test4"
+                "test3",
+                "-s",
+                "3"
             ],
             "envFile": "${workspaceFolder}/scripts/envs.sh"
         },

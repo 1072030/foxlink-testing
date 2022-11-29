@@ -1,12 +1,14 @@
 import logging
 import time
 from pymysql import NULL
-import requests, json
+import requests
+import json
 from app.env import SERVER_URL
 from app.services.log import create_log, kill_process
 from datetime import datetime
 
-def login(username, id,timeout=60,logger=logging):
+
+def login(username, id, timeout=60, logger=logging):
     status = None
     token = None
 
@@ -16,59 +18,65 @@ def login(username, id,timeout=60,logger=logging):
         'client_id': id
     }
 
+    try:
+        r = requests.post(f'{SERVER_URL}/auth/token', data=payloads, timeout=timeout)
+        token = r.json()['access_token']
+        status = r.status_code
+    except ConnectionResetError as e:
+        time.sleep(5)
+        logger.warning(f"can't login, connection reset.")
+    except Exception as e:
+        logger.warning(f"can't login, unknown exception occur.")
+        logger.warning(e)
+
     create_log(
-        param = {
+        param={
             'mission_id': NULL,
             'mqtt': '',
             'username': username,
             'action': 'login',
-            'description': '',
+            'description': f'{status},{token}',
             'mqtt_detail': '',
             'time': datetime.now(),
         }
     )
 
-    try:
-        r = requests.post(f'{SERVER_URL}/auth/token',data=payloads, timeout=timeout)
-        token = r.json()['access_token']
-        status = r.status_code
-
-    except Exception as e:
-        logger.warning(f"can't login, exception occur.")
-        logger.warning(e)
-
     return status, token
 
-def logout(token, username, reason='OffWork',timeout=60,logger=logging):
+
+def logout(token, username, reason='OffWork', timeout=60, logger=logging):
     status = None
     header = {
         'Authorization': f'Bearer {token}',
         'accept': 'application/json'
     }
 
+    try:
+        r = requests.post(f'{SERVER_URL}/users/get-off-work?reason={reason}', headers=header, timeout=timeout)
+        status = r.status_code
+    except ConnectionResetError as e:
+        time.sleep(5)
+        logger.warning(f"can't logout, connection reset.")
+    except Exception as e:
+        logger.warning(f"can't logout, exception occur.")
+        logger.warning(e)
+
     create_log(
-        param = {
+        param={
             'mission_id': NULL,
             'mqtt': '',
             'username': username,
             'action': 'logout',
-            'description': '',
+            'description': f'{status}',
             'mqtt_detail': '',
             'time': datetime.now(),
         }
     )
 
-    try:
-        r = requests.post(f'{SERVER_URL}/users/get-off-work?reason={reason}', headers=header, timeout=timeout)
-        status = r.status_code
-
-    except Exception as e:
-        logger.warning(f"can't logout, exception occur.")
-        logger.warning(e)
-
     return status
 
-def mission_action(token, mission_id, action, username,timeout=60,logger=logging):
+
+def mission_action(token, mission_id, action, username, timeout=60, logger=logging):
     status = None
     result = None
     header = {
@@ -77,32 +85,33 @@ def mission_action(token, mission_id, action, username,timeout=60,logger=logging
     }
     try:
         if action == 'reject':
-            r = requests.get(f'{SERVER_URL}/missions/{mission_id}/reject', headers=header,timeout=timeout)
+            r = requests.get(f'{SERVER_URL}/missions/{mission_id}/reject', headers=header, timeout=timeout)
         elif action == 'start':
-            r = requests.post(f'{SERVER_URL}/missions/{mission_id}/start', headers=header,timeout=timeout)
+            r = requests.post(f'{SERVER_URL}/missions/{mission_id}/start', headers=header, timeout=timeout)
         elif action == 'accept':
-            r = requests.post(f'{SERVER_URL}/missions/{mission_id}/accept', headers=header,timeout=timeout)
+            r = requests.post(f'{SERVER_URL}/missions/{mission_id}/accept', headers=header, timeout=timeout)
         elif action == "finish":
             r = requests.post(f'{SERVER_URL}/missions/{mission_id}/finish', headers=header, timeout=timeout)
         else:
             logger.warning(f"[mission action]unknown action: {action}")
 
         status = r.status_code
-        
+
+    except ConnectionResetError as e:
+        time.sleep(5)
+        logger.warning(f"can't perform action({action}), connection reset.")
     except Exception as e:
-        logger.warning(f"can't perform action({action}), exception occur.")
+        logger.warning(f"can't perform action({action}), unknown exception occur.")
         logger.info(e)
 
     try:
         result = json.dumps(r.json())
-
     except Exception as e:
         logger.warning(f"can't dump result of action({action}), exception occur.")
         logger.info(e)
 
-
     create_log(
-        param = {
+        param={
             'mission_id': mission_id,
             'mqtt': '',
             'username': username,
@@ -113,5 +122,4 @@ def mission_action(token, mission_id, action, username,timeout=60,logger=logging
         }
     )
 
-   
     return status

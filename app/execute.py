@@ -1,16 +1,13 @@
 import json
 import signal
-import app.worker as aw
 import argparse
 import multiprocessing
 import app.foxlinkevent as fevents
 from datetime import datetime
-from app.services.thread import worker
+from app.services.worker import worker
 import logging
 
 logger = logging.getLogger("execute-server")
-
-
 
 def cleanup_childrens(*args,**_args):
     active = multiprocessing.active_children()
@@ -27,10 +24,14 @@ def entry_point():
     start_time = datetime.now()
     processes = [
         *create_worker_behaviour_process(),
-        multiprocessing.Process(target=fevents.entry_point)
     ]
     for p in processes:
         p.start()
+
+    event_generator = multiprocessing.Process(target=fevents.entry_point)
+    event_generator.start()
+    event_generator.join()
+    logger.warning("FOxliNk EveNt Complete...")
 
     for p in processes:
         p.join()
@@ -42,7 +43,8 @@ def entry_point():
 def create_worker_behaviour_process():
     parser = argparse.ArgumentParser()
     parser.add_argument(dest='json')
-    args = parser.parse_args()
+    parser.add_argument("-s",dest="speed",type=int,default=1)
+    args, unknown = parser.parse_known_args()
     
     with open(f'./app/scenario/{args.json}.json') as jsonfile:
 
@@ -60,7 +62,8 @@ def create_worker_behaviour_process():
                 args=(
                     worker_behaviour[i]['username'],
                     worker_behaviour[i]['behavier'],
-                    i + 1
+                    i + 1,
+                    args.speed
                 )
             )
             for i in range(len(worker_behaviour))
