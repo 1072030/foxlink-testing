@@ -126,13 +126,15 @@ class WorkerThread(Process):
 
                 status = mission_action(self.token, self.mission_id, action, self.username,timeout=timeout)
 
-            elif action == 'start' and self.behavier[i - 1]['api'] == 'start':
+            elif action == 'start' and self.behavier[i - 1]['api'] == 'finish':
                 self.topic = f'foxlink/users/{self.id}/move-rescue-station'
                 self.mqtt(action)
 
                 while self.mission_id == 0:
                     self.logger.info(f"Waiting the MQTT message for action:{action}")
                     time.sleep(5)
+                
+                status = mission_action(self.token, self.mission_id, action, self.username,timeout=timeout)
 
             elif action in ['start', 'finish']:
                 status = mission_action(self.token, self.mission_id, action, self.username,timeout=timeout)
