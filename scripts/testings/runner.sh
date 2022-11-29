@@ -26,8 +26,26 @@ else
     exit 0
 fi
 
+
+
+
 sleep 2
-# create time
-python -m app.utils.create_time -f $SCENARIO
+echo "Running $SCENARIO...."
+
+if [ $SCENARIO == "test5" ];
+then
+    # shift time
+    SHIFT_TIME_T1="$(date --date='-5 minutes' +'%Y-%m-%d %H:%M:%S')"
+    SHIFT_TIME_T2="$(date --date='+5 minutes' +'%Y-%m-%d %H:%M:%S')"
+    python -m app.update_shift_time "$SHIFT_TIME_T1" "$SHIFT_TIME_T2"
+
+    # create time
+    python -m app.utils.create_time -f $SCENARIO -s "$SHIFT_TIME_T2"
+else
+    # create time
+    python -m app.utils.create_time -f $SCENARIO "${@:2}"
+fi
+
+
 # run test case
-python -m app.execute $SCENARIO
+python -m app.execute $SCENARIO "${@:2}"

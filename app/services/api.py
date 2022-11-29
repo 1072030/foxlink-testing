@@ -123,3 +123,23 @@ def mission_action(token, mission_id, action, username, timeout=60, logger=loggi
     )
 
     return status
+
+
+def set_shift_time(did, date1, date2, timeout=60, logger=logging):
+    data = {
+        'id': did + 1,
+        "shift_beg_time": str(date1),
+        "shift_end_time": str(date2)
+    }
+    try:
+        r = requests.get(
+            f'{SERVER_URL}/shift/update',
+            params=data,
+            timeout=timeout
+        )
+        return r.status_code
+    except ConnectionResetError as e:
+        logger.warning(f"can't update, connection reset.")
+    except Exception as e:
+        logger.warning(f"can't update, unknown exception occur.")
+        logger.warning(e)

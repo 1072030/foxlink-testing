@@ -43,7 +43,7 @@ def entry_point():
 def create_worker_behaviour_process():
     parser = argparse.ArgumentParser()
     parser.add_argument(dest='json')
-    parser.add_argument("-s",dest="speed",type=int,default=1)
+    parser.add_argument("-n",dest="speed",type=int,default=1)
     args, unknown = parser.parse_known_args()
     
     with open(f'./app/scenario/{args.json}.json') as jsonfile:

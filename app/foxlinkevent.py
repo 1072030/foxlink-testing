@@ -69,7 +69,7 @@ async def driver(args):
 def entry_point():
     parser = argparse.ArgumentParser()
     parser.add_argument(dest='json')
-    parser.add_argument("-s",dest="speed",type=int,default=1)
+    parser.add_argument("-n",dest="speed",type=int,default=1)
     args, unknown = parser.parse_known_args()
     asyncio.run(driver(args))
     

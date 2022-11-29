@@ -192,7 +192,7 @@ username = "Unspecified"
 def worker(_username, _behavier, _id, speed=1):
     global client, topic_results, is_connect, username
 
-    # if not _username == "C0001":
+    # if not _username == "C0033":
     #     return
 
     logger = logging.getLogger(_username)
