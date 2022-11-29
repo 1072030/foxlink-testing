@@ -27,8 +27,9 @@ else
 fi
 
 sleep 5
+TIME_FULL="$(date --date='5 minute' +'%Y-%m-%d %H:%M:%S')"
 # create time
-python -m app.utils.create_time -f $SCENARIO
+python -m app.utils.create_time -f $SCENARIO -s "$TIME_FULL" 
 # # run foxlinkevents
 # python -m app.foxlinkevent $SCENARIO &
 # # run test case

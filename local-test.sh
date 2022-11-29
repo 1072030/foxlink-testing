@@ -6,5 +6,3 @@ bash scripts/systems/start_server.sh incubator
 bash scripts/systems/start_server.sh db $1
 sleep 5
 bash scripts/tools/init_db.sh event
-
-

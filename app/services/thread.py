@@ -102,11 +102,12 @@ class WorkerThread(Process):
         
     def run(self):
         i = 0
+        fail_count = 0
         while i < len(self.behavier):
             status = None
             action = self.behavier[i]['api']
             response_time = self.behavier[i]['response_time']
-            timeout = 10 # seconds
+            timeout = 60 # seconds
             self.logger.info(f"action:{action} begin to with timeout({timeout})")
 
             time.sleep(response_time)
@@ -144,5 +145,10 @@ class WorkerThread(Process):
             if status and status >= 200 and status <= 299:
                 self.logger.info(f"action:{action} completed.")
                 i += 1
+            else:
+                time.sleep(1)
+                fail_count += 1
+                if fail_count == 5:
+                    i += 1
 
         self.logger.info("completed all tasks, leaving")
