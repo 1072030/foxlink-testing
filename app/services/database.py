@@ -21,7 +21,7 @@ from app.env import (
 
 DATABASE_URI = f"mysql://{FOXLINK_DATABASE_USER}:{FOXLINK_DATABASE_PASSWORD}@{FOXLINK_DATABASE_HOST}:{FOXLINK_DATABASE_PORT}/{FOXLINK_DATABASE_NAME}"
 
-database = databases.Database(DATABASE_URI, max_size=7)
+database = databases.Database(DATABASE_URI, max_size=10)
 
 metadata = MetaData()
 
@@ -29,9 +29,11 @@ MissionRef = ForwardRef("Mission")
 
 AuditLogHeaderRef = ForwardRef("AuditLogHeader")
 
+
 class MainMeta(ormar.ModelMeta):
     metadata = metadata
     database = database
+
 
 class FoxlinkEvent(ormar.Model):
     class Meta(MainMeta):
@@ -48,6 +50,7 @@ class FoxlinkEvent(ormar.Model):
     end_file_name: str = ormar.String(max_length=10, nullable=True)
     project: str = ormar.String(max_length=100, nullable=True)
     event_id: int = ormar.Integer()
+
 
 class TestingLog(ormar.Model):
     class Meta(MainMeta):
