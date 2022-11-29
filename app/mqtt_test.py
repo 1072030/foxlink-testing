@@ -37,9 +37,9 @@ def subscribe(client_id, username, action, response_time):
         client.disconnect()
 
     client = connect_mqtt(client_id)
-    client.subscribe([(f'foxlink/users/{client_id}/missions', 2)])
+    client.subscribe([(f"foxlink/users/1/move-rescue-station", 2)])
     client.on_message = on_message
     client.loop_forever()
     return mission_id
 
-subscribe(1, 'C0001', 'hello', 1)
+subscribe(str(uuid.uuid4()), 'C0001', 'hello', 1)

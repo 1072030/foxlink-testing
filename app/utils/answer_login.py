@@ -3,8 +3,8 @@ import pandas as pd
 from datetime import datetime
 
 connection = mysql.connector.connect(
-host = '140.118.157.9',
-database = 'foxlink',
+host = '127.0.0.1',
+database = 'testing_api',
 user = 'root',
 password = 'AqqhQ993VNto',
 port='27001',
@@ -12,7 +12,7 @@ buffered= True)
 
 cursor = connection.cursor()
 
-mySql_insert_query = f"""SELECT * FROM foxlink.auditlogheaders"""
+mySql_insert_query = f"""SELECT * FROM testing_api.audit_log_headers"""
 cursor.execute(mySql_insert_query)
 data = cursor.fetchall()
 cursor.close()
@@ -57,7 +57,8 @@ total_avg = 0
 
 for i in range(1, 201):
     name = 'C0{}'.format(str(i).zfill(3))
-    result[name]['avg'] = sum(result[name]['period']) / len(result[name]['period'])
+    if len(result[name]['period']) != 0:
+        result[name]['avg'] = sum(result[name]['period']) / len(result[name]['period'])
     total_avg += result[name]['avg']
     if result[name]['login'] == result[name]['logout'] and result[name]['login'] == 100:
         result[name]['is_correct'] = True
