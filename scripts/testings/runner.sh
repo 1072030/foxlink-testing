@@ -27,8 +27,6 @@ else
 fi
 
 
-
-
 sleep 2
 echo "Running $SCENARIO...."
 
@@ -43,9 +41,9 @@ then
     python -m app.utils.create_time -f $SCENARIO -s "$SHIFT_TIME_T2"
 else
     # create time
-    python -m app.utils.create_time -f $SCENARIO "${@:2}"
+    python -m app.utils.create_time -f $SCENARIO
 fi
 
 
 # run test case
-python -m app.execute $SCENARIO "${@:2}"
+python -m app.execute $SCENARIO

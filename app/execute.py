@@ -71,6 +71,6 @@ def create_worker_behaviour_process():
 
 
 if __name__ == "__main__":
-    multiprocessing.set_start_method('forkserver')
+    multiprocessing.set_start_method('spawn')
     entry_point()
     

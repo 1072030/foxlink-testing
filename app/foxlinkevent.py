@@ -49,19 +49,11 @@ async def driver(args):
         print("StaRt ProCesS....")
 
         await asyncio.gather(
-                    *[
-                        generator(events[i],args.speed)
-                        for i in range(event_number)
-                    ]
+            *[
+                generator(events[i],args.speed)
+                for i in range(event_number)
+            ]
         )
-        # while True:
-        #     try:
-               
-        #     except:
-        #         logging.error("exception occured!! retry to run all the events...")
-        #         continue
-        #     else: 
-        #         break
 
         print("FoXliNk EveNt ImPorT Done....")
     await database.disconnect()

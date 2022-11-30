@@ -14,7 +14,7 @@ import logging
 from multiprocessing import Process
 import asyncio
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("worker")
+logger = None
 
 # class WorkerThread(threading.Thread):
 
@@ -190,26 +190,23 @@ username = "Unspecified"
 
 
 def worker(_username, _behavier, _id, speed=1):
-    global client, topic_results, is_connect, username
-
-    # if not _username == "C0033":
-    #     return
+    global client, topic_results, is_connect, username, logger
 
     logger = logging.getLogger(_username)
     username = _username
     behavier = _behavier
     mission_id = 0
-    id = _id
+    id = _id + 10000
 
     token = None
 
     ##### Start MQTT Client ######
-    client = mqtt_client.Client(username)
+    client = mqtt_client.Client(f"{username}#{_id}")
     client.on_message = on_message
     client.on_subscribe = on_subscribe
     client.on_disconnect = on_disconnect
     client.on_connect = on_connect
-    client.connect(MQTT_BROKER, MQTT_PORT, keepalive=10)
+    client.connect(MQTT_BROKER, MQTT_PORT, keepalive=60)
     client.loop_start()
 
     i = 0

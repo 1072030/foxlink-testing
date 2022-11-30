@@ -41,6 +41,8 @@ def login(username, id, timeout=60, logger=logging):
         }
     )
 
+    time.sleep(5)
+
     return status, token
 
 
@@ -55,7 +57,6 @@ def logout(token, username, reason='OffWork', timeout=60, logger=logging):
         r = requests.post(f'{SERVER_URL}/users/get-off-work?reason={reason}', headers=header, timeout=timeout)
         status = r.status_code
     except ConnectionResetError as e:
-        time.sleep(5)
         logger.warning(f"can't logout, connection reset.")
     except Exception as e:
         logger.warning(f"can't logout, exception occur.")
@@ -72,6 +73,8 @@ def logout(token, username, reason='OffWork', timeout=60, logger=logging):
             'time': datetime.now(),
         }
     )
+
+    time.sleep(5)
 
     return status
 
@@ -98,7 +101,6 @@ def mission_action(token, mission_id, action, username, timeout=60, logger=loggi
         status = r.status_code
 
     except ConnectionResetError as e:
-        time.sleep(5)
         logger.warning(f"can't perform action({action}), connection reset.")
     except Exception as e:
         logger.warning(f"can't perform action({action}), unknown exception occur.")
@@ -121,6 +123,7 @@ def mission_action(token, mission_id, action, username, timeout=60, logger=loggi
             'time': datetime.now(),
         }
     )
+    time.sleep(5)
 
     return status
 
