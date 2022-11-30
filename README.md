@@ -5,5 +5,5 @@
     -   configure: scripts/systems/envs.sh, to configure the container settings
     -   run: bash scripts/systems/create_components.sh, to build the container environment
     -   run: bash scripts/systems/{start_server,clean_server}.sh {incubator,db,emqx} to control container.
-    -   configure: scripts/testing/envs.sh, to configure the scenario settings.
+    -   configure: scripts/envs.sh, to configure the scenario settings.
     -   run: bash scripts/testings/runner.sh {local,remote} to start the scenario testing.
