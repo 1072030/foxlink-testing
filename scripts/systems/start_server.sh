@@ -12,7 +12,7 @@ incubator(){
     docker run -dt \
         -v $BACKEND_SERVER_DOCKER_CONTEXT:/code/ \
         --env-file "$BACKEND_SERVER_DOCKER_CONTEXT/.env" \
-        -p 9090:8080 \
+        -p 8080:80 \
         --network $DOCKER_NETWORK \
         --name incubator \
         $IMAGE \
