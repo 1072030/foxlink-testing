@@ -190,23 +190,25 @@ username = "Unspecified"
 
 
 def worker(_username, _behavier, _id, speed=1):
+    # if (not _username == "C0001"):
+    #     return
     global client, topic_results, is_connect, username, logger
 
     logger = logging.getLogger(_username)
     username = _username
     behavier = _behavier
     mission_id = 0
-    id = _id + 10000
+    worker_uuid = _id + 10000
 
     token = None
 
     ##### Start MQTT Client ######
-    client = mqtt_client.Client(f"{username}#{_id}")
+    client = mqtt_client.Client(f"{username}#{worker_uuid}", clean_session=False)
     client.on_message = on_message
     client.on_subscribe = on_subscribe
     client.on_disconnect = on_disconnect
     client.on_connect = on_connect
-    client.connect(MQTT_BROKER, MQTT_PORT, keepalive=60)
+    client.connect(MQTT_BROKER, MQTT_PORT, keepalive=10)
     client.loop_start()
 
     i = 0
@@ -223,14 +225,14 @@ def worker(_username, _behavier, _id, speed=1):
         time.sleep(float(response_time) / speed)
 
         if action == 'login':
-            status, token = login(username, id, timeout)
+            status, token = login(username, worker_uuid, timeout)
 
         elif action == 'logout':
             status = logout(token, username, timeout=timeout)
 
         elif action in ['accept', 'reject']:
             if (fetch):
-                mission_id = mqtt(action, f'foxlink/users/{id}/missions')
+                mission_id = mqtt(action, f'foxlink/users/{worker_uuid}/missions')
 
             status = mission_action(
                 token,
@@ -241,7 +243,7 @@ def worker(_username, _behavier, _id, speed=1):
             )
         elif action == 'start' and behavier[i - 1]['api'] == 'finish':
             if (fetch):
-                mission_id = mqtt(action, f'foxlink/users/{id}/move-rescue-station')
+                mission_id = mqtt(action, f'foxlink/users/{worker_uuid}/move-rescue-station')
             status = mission_action(token, mission_id, action, username, timeout=timeout)
 
         elif action in ['start', 'finish']:

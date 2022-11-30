@@ -6,31 +6,46 @@ import asyncio
 import signal
 from datetime import datetime, timedelta
 from app.services.database import database, FoxlinkEvent,DATABASE_URI
-
+logger = logging.getLogger("FOXLINKEVENT")
 async def generator(event,speed):
     current_time =  datetime.now() - timedelta(hours=8)
     start_time = datetime.strptime(event['start_time'], '%Y-%m-%d %H:%M:%S') - timedelta(hours=8)
     end_time = None if event['end_time'] == '' else datetime.strptime(event['end_time'], '%Y-%m-%d %H:%M:%S') - timedelta(hours=8)
     if event['status'] == 'create':
         await asyncio.sleep(float(max((start_time - current_time).total_seconds(),0))/speed) 
-        await FoxlinkEvent.objects.create(
-            project=event['project'],
-            line=str(int(event['line'])),
-            device_name=event['device_name'],
-            category=event['category'],
-            start_time=start_time,
-            end_time=end_time,
-            message=event['message'],
-            start_file_name='',
-            end_file_name='',
-            event_id=event['event_id']
-        )
+        while True:
+            try:
+                await FoxlinkEvent.objects.create(
+                    project=event['project'],
+                    line=str(int(event['line'])),
+                    device_name=event['device_name'],
+                    category=event['category'],
+                    start_time=start_time,
+                    end_time=end_time,
+                    message=event['message'],
+                    start_file_name='',
+                    end_file_name='',
+                    event_id=event['event_id']
+                )
+            except Exception as e:
+                logger.error("cannot create objects...., because -> {e}")
+                asyncio.sleep(1)
+            else:
+                break
+            
 
     if end_time and event['status'] == 'update':
         event = await FoxlinkEvent.objects.filter(event_id=event['event_id']).get_or_none()
         if event:
             await asyncio.sleep(float(max((end_time - current_time).total_seconds(),0))/speed) 
-            await event.update(end_time=end_time)
+            while True:
+                try:
+                    await event.update(end_time=end_time)
+                except Exception as e:
+                    logger.error("cannot create objects...., because -> {e}")
+                    asyncio.sleep(1)
+                else:
+                    break
 
 async def driver(args):
     print(DATABASE_URI)
