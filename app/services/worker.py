@@ -39,6 +39,7 @@ def on_subscribe(client, userdata, flags, rc):
 
 def on_message(client, userdata, msg):
     global topic_results, is_connect
+    duplicate = False
     info = msg.payload.decode()
     topic = msg.topic
     retain = msg.retain
@@ -46,7 +47,10 @@ def on_message(client, userdata, msg):
 
     logger.warn(f"on_message:{username} {mission_id} {retain}")
 
-    topic_results[topic].append(mission_id)
+    if (topic in topic_results and len(topic_results[topic]) > 0 and mission_id == topic_results[topic][-1]):
+        duplicate = True
+    else:
+        topic_results[topic].append(mission_id)
 
     create_log(
         param={
@@ -54,7 +58,7 @@ def on_message(client, userdata, msg):
             'mqtt': topic,
             'username': username,
             'action': "",
-            'description': f'mqtt receive (retain: {retain})',
+            'description': f'mqtt receive (retain: {retain})' + (", duplicated" if duplicate else ""),
             'mqtt_detail': info,
             'time': datetime.now()
         }
@@ -156,7 +160,7 @@ def register_topic(topic):
     )
 
 
-def mqtt(action, topic):
+def mqtt_get(action, topic):
     global client, topic_results, is_connect
 
     while (not is_connect):
@@ -170,7 +174,8 @@ def mqtt(action, topic):
         # logger.info(f"waiting for mqtt message with action:{action}")
         time.sleep(3)
 
-    result = topic_results[topic].pop(0)
+    # result = topic_results[topic].pop(0)
+    result = topic_results[topic][0]
 
     create_log(
         param={
@@ -185,6 +190,12 @@ def mqtt(action, topic):
     )
 
     return result
+
+
+def mqtt_sync(status, topic):
+    global topic_results
+    if (status and status >= 200 and status <= 299):
+        topic_results[topic].pop(0)
 
 
 client = None
@@ -235,9 +246,8 @@ def worker(_username, _behavier, _id, speed=1):
             status = logout(token, username, timeout=timeout)
 
         elif action in ['accept', 'reject']:
-            if (fetch):
-                mission_id = mqtt(action, f'foxlink/users/{worker_uuid}/missions')
-
+            topic = f'foxlink/users/{worker_uuid}/missions'
+            mission_id = mqtt_get(action, topic)
             status = mission_action(
                 token,
                 mission_id,
@@ -245,10 +255,19 @@ def worker(_username, _behavier, _id, speed=1):
                 username,
                 timeout=timeout
             )
+            mqtt_sync(status, topic)
+
         elif action == 'start' and behavier[i - 1]['api'] == 'finish':
-            if (fetch):
-                mission_id = mqtt(action, f'foxlink/users/{worker_uuid}/move-rescue-station')
-            status = mission_action(token, mission_id, action, username, timeout=timeout)
+            topic = f'foxlink/users/{worker_uuid}/move-rescue-station'
+            mission_id = mqtt_get(action, topic)
+            status = mission_action(
+                token,
+                mission_id,
+                action,
+                username,
+                timeout=timeout
+            )
+            mqtt_sync(status, topic)
 
         elif action in ['start', 'finish']:
             status = mission_action(token, mission_id, action, username, timeout=timeout)
