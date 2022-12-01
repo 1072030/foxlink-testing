@@ -62,7 +62,7 @@ def on_message(client, userdata, msg):
 
 
 def on_connect(c, user_data, flags, rc):
-    global is_connect, username
+    global is_connect, username, topic_results, client
     if (rc == 0):
         logger.info(f"Connection successful: Broker")
         create_log(
@@ -76,6 +76,10 @@ def on_connect(c, user_data, flags, rc):
                 'time': datetime.now()
             }
         )
+
+        for topic in topic_results.keys():
+            client.subscribe(topic, 2)
+
         is_connect = True
         return
     elif (rc == 1):
