@@ -210,7 +210,6 @@ def worker(_username, _behavier, _id, speed=1):
     client.loop_start()
 
     i = 0
-    fetch = True
 
     while i < len(behavier):
         status = None
@@ -259,10 +258,7 @@ def worker(_username, _behavier, _id, speed=1):
 
         if status and status >= 200 and status <= 299:
             logger.info(f"action:{action} completed.")
-            fetch = True
             i += 1
-        else:
-            fetch = False
 
     logger.info("completed all tasks, leaving")
 

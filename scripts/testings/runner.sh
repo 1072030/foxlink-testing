@@ -40,6 +40,7 @@ then
     # create time
     python -m app.utils.create_time -f $SCENARIO -s "$SHIFT_TIME_T2"
 else
+    # echo "skipping the create time scenario ....."
     # create time
     python -m app.utils.create_time -f $SCENARIO -b 150
 fi
