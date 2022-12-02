@@ -35,7 +35,7 @@ async def generator(event,speed):
             
 
     if end_time and event['status'] == 'update':
-        await asyncio.sleep(float(max((end_time - current_time).total_seconds(),0))/speed) 
+        await asyncio.sleep((float(max((end_time - current_time).total_seconds(),0))+1)/speed) 
         event = await FoxlinkEvent.objects.filter(event_id=event['event_id']).get_or_none()
         if event:
             while True:
