@@ -29,9 +29,9 @@ def on_subscribe(client, userdata, flags, rc):
             'mission_id': NULL,
             'mqtt': '',
             'username': username,
-            'action': "",
-            'description': f'subscribe',
-            'mqtt_detail': f'{repr(userdata)}',
+            'action': "mqtt:subscribe",
+            'description': f'status:{rc}',
+            'mqtt_detail': f'{userdata}',
             'time': datetime.now()
         }
     )
@@ -47,7 +47,14 @@ def on_message(client, userdata, msg):
 
     logger.warn(f"on_message:{username} {mission_id} {retain}")
 
-    if (topic in topic_results and len(topic_results[topic]) > 0 and mission_id == topic_results[topic][-1]):
+    if (
+        retain or
+        (
+            topic in topic_results and
+            len(topic_results[topic]) > 0 and
+            mission_id == topic_results[topic][-1]
+        )
+    ):
         duplicate = True
     else:
         topic_results[topic].append(mission_id)
@@ -57,35 +64,21 @@ def on_message(client, userdata, msg):
             'mission_id': mission_id,
             'mqtt': topic,
             'username': username,
-            'action': "",
-            'description': f'mqtt receive (retain: {retain})' + (", duplicated" if duplicate else ""),
-            'mqtt_detail': info,
+            'action': "mqtt:receive",
+            'description': f"retain: {retain}, duplicate: {duplicate}",
+            'mqtt_detail': f"userdata:{userdata}\n, msg:{msg}",
             'time': datetime.now()
         }
     )
 
 
-def on_connect(c, user_data, flags, rc):
+def on_connect(c, userdata, flags, rc):
     global is_connect, username, topic_results, client
     if (rc == 0):
         logger.info(f"Connection successful: Broker")
-        create_log(
-            param={
-                'mission_id': NULL,
-                'mqtt': "",
-                'username': username,
-                'action': "",
-                'description': f'mqtt connected',
-                'mqtt_detail': "",
-                'time': datetime.now()
-            }
-        )
-
         for topic in topic_results.keys():
             client.subscribe(topic, 2)
-
         is_connect = True
-        return
     elif (rc == 1):
         logger.warn("Connection refused - incorrect protocol version")
     elif (rc == 2):
@@ -98,14 +91,15 @@ def on_connect(c, user_data, flags, rc):
         logger.warn("Connection refused - not authorised")
     else:
         logger.error("Connection refused - unknown error.")
+
     create_log(
         param={
             'mission_id': NULL,
             'mqtt': "",
             'username': username,
-            'action': "",
-            'description': f'mqtt connection failed',
-            'mqtt_detail': "",
+            'action': "mqtt:connect",
+            'description': f'{"success" if rc == 0 else "failed" }. status:{rc}',
+            'mqtt_detail': f"{userdata}",
             'time': datetime.now()
         }
     )
@@ -115,30 +109,19 @@ def on_disconnect(client, userdata, rc):
     global topic_results, is_connect
     if rc == 0:
         logger.info("Disconnect successful")
-        create_log(
-            param={
-                'mission_id': NULL,
-                'mqtt': "",
-                'username': username,
-                'action': "",
-                'description': f'mqtt disconnected by user.',
-                'mqtt_detail': "",
-                'time': datetime.now()
-            }
-        )
     else:
         logger.error("Disconnect - unknown error.")
-        create_log(
-            param={
-                'mission_id': NULL,
-                'mqtt': "",
-                'username': username,
-                'action': "",
-                'description': f'mqtt disconnected',
-                'mqtt_detail': "",
-                'time': datetime.now()
-            }
-        )
+    create_log(
+        param={
+            'mission_id': NULL,
+            'mqtt': "",
+            'username': username,
+            'action': "mqtt:disconnect",
+            'description': f'{"success" if rc == 0 else "failed" }. status:{rc}',
+            'mqtt_detail': f"{userdata}",
+            'time': datetime.now()
+        }
+    )
     is_connect = False
 
 
@@ -152,8 +135,8 @@ def register_topic(topic):
             'mission_id': NULL,
             'mqtt': "",
             'username': username,
-            'action': "",
-            'description': f'try subscribe: {topic}',
+            'action': "subscribe",
+            'description': f'@{topic}',
             'mqtt_detail': "",
             'time': datetime.now()
         }
@@ -179,12 +162,12 @@ def mqtt_get(action, topic):
 
     create_log(
         param={
-            'mission_id': NULL,
+            'mission_id': result,
             'mqtt': f'{topic}',
             'username': username,
             'action': action,
-            'description': f'retrieving',
-            'mqtt_detail': f'result:{result}',
+            'description': f'get from mqtt.',
+            'mqtt_detail': f'',
             'time': datetime.now()
         }
     )
