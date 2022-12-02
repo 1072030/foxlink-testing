@@ -1,5 +1,5 @@
 import asyncio, json
-from datetime import datetime
+from datetime import datetime, timedelta
 import logging
 from app.services.database import TestingLog, database
 import mysql.connector
@@ -32,7 +32,7 @@ def create_log(param):
             cursor = CONNECTION.cursor()
 
             mySql_insert_query = "INSERT INTO testinglogs (mission_id, mqtt, username, action, description, mqtt_detail, time) VALUES ({}, '{}', '{}', '{}', '{}', '{}', '{}');".format(
-                param['mission_id'], param['mqtt'], param['username'], param['action'], param['description'], param['mqtt_detail'].replace("'", "\\\'"), param['time'].strftime('%Y-%m-%d  %H:%M:%S')
+                param['mission_id'], param['mqtt'], param['username'], param['action'], param['description'], param['mqtt_detail'].replace("'", "\\\'"), (param['time'] - timedelta(hours=8)).strftime('%Y-%m-%d  %H:%M:%S')
             )
             cursor.execute(mySql_insert_query)
             CONNECTION.commit()
