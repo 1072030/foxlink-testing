@@ -209,6 +209,9 @@ def worker(_username, _behavier, _id, speed=1):
     client.connect(MQTT_BROKER, MQTT_PORT, keepalive=10)
     client.loop_start()
 
+    register_topic(f'foxlink/users/{worker_uuid}/move-rescue-station')
+    register_topic(f'foxlink/users/{worker_uuid}/missions')
+
     i = 0
     j = 0
     while i < len(behavier):
@@ -264,17 +267,18 @@ def worker(_username, _behavier, _id, speed=1):
             j += 1
             if (j > 10):
                 i += 1
-            create_log(
-                param={
-                    'mission_id': NULL,
-                    'mqtt': '',
-                    'username': username,
-                    'action': action,
-                    'description': f'skipping for error exceed',
-                    'mqtt_detail': f'',
-                    'time': datetime.now()
-                }
-            )
+                j = 0
+                create_log(
+                    param={
+                        'mission_id': NULL,
+                        'mqtt': '',
+                        'username': username,
+                        'action': action,
+                        'description': f'skipping for error exceed',
+                        'mqtt_detail': f'',
+                        'time': datetime.now()
+                    }
+                )
 
     logger.info("completed all tasks, leaving")
 
