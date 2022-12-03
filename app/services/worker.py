@@ -210,7 +210,7 @@ def worker(_username, _behavier, _id, speed=1):
     client.loop_start()
 
     i = 0
-
+    j = 0
     while i < len(behavier):
         status = None
         action = behavier[i]['api']
@@ -256,9 +256,25 @@ def worker(_username, _behavier, _id, speed=1):
 
         logger.info(f"ended {action} with status:{status}")
 
-        if status and status >= 200 and status <= 299:
+        if status and 200 <= status and status <= 299:
             logger.info(f"action:{action} completed.")
             i += 1
+            j = 0
+        elif (status and 400 <= status <= 499):
+            j += 1
+            if (j > 10):
+                i += 1
+            create_log(
+                param={
+                    'mission_id': NULL,
+                    'mqtt': '',
+                    'username': username,
+                    'action': action,
+                    'description': f'skipping for error exceed',
+                    'mqtt_detail': f'',
+                    'time': datetime.now()
+                }
+            )
 
     logger.info("completed all tasks, leaving")
 

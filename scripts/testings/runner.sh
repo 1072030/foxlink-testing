@@ -39,4 +39,4 @@ fi
 
 
 # run test case
-python -m app.execute $SCENARIO
+python -m app.execute $SCENARIO -n 1
