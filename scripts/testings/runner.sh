@@ -39,10 +39,4 @@ fi
 
 
 # run test case
-<<<<<<< Updated upstream
 python -m app.execute $SCENARIO -n 1
-=======
-python -m app.execute $SCENARIO -n 50
-
-# run disconnect
->>>>>>> Stashed changes
