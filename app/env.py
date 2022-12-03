@@ -16,3 +16,10 @@ MQTT_BROKER = os.getenv("MQTT_BROKER")
 MQTT_PORT = int(os.getenv("MQTT_PORT"))
 
 TESTING_LOG = bool(os.getenv("TESTING_LOG"))
+
+RESPONSE_START = int(os.getenv("RESPONSE_START"))
+RESPONSE_END = int(os.getenv("RESPONSE_END"))
+REPAIR_START = int(os.getenv("REPAIR_START"))
+REPAIR_END = int(os.getenv("REPAIR_END"))
+
+SCENARIO = os.getenv("SCENARIO")

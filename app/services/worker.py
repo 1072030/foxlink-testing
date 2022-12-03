@@ -5,7 +5,7 @@ from pymysql import NULL
 from app.services.api import login, logout, mission_action
 from app.services.log import create_log
 from pymysql import NULL
-from app.env import MQTT_BROKER, MQTT_PORT
+from app.env import MQTT_BROKER, MQTT_PORT, SCENARIO
 from paho.mqtt import client as mqtt_client
 from datetime import datetime
 import time
@@ -186,6 +186,17 @@ topic_results = {}
 is_connect = False
 username = "Unspecified"
 
+def get_status_info(status, fail_count, action):
+    if status and status >= 200 and status <= 299:
+        return True, 0
+    
+    fail_count += 1
+    if (SCENARIO == 'testLogin' and action == 'logout') or SCENARIO == 'test6':
+        if fail_count == 10:
+            return True, 0
+        return False, fail_count
+    
+    return False, 0
 
 def worker(_username, _behavier, _id, speed=1):
     # if (not _username == "C0001"):
@@ -213,7 +224,8 @@ def worker(_username, _behavier, _id, speed=1):
     register_topic(f'foxlink/users/{worker_uuid}/missions')
 
     i = 0
-    j = 0
+    fetch = True
+    fail_count = 0
     while i < len(behavier):
         status = None
         action = behavier[i]['api']
@@ -258,12 +270,19 @@ def worker(_username, _behavier, _id, speed=1):
             status = mission_action(token, mission_id, action, username, timeout=timeout)
 
         logger.info(f"ended {action} with status:{status}")
+        
+        # is_success, fail_count = get_status_info(status, fail_count, action)
+        # is_success = True
+        # if is_success:
+        #     logger.info(f"action:{action} completed.")
+        #     i += 1
 
         if status and 200 <= status and status <= 299:
             logger.info(f"action:{action} completed.")
             i += 1
             j = 0
         elif (status and 400 <= status <= 499):
+            logger.warning(f"{username} skipping for error exceed")
             j += 1
             if (j > 10):
                 i += 1

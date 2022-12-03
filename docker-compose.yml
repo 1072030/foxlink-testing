@@ -1,0 +1,44 @@
+version: "3"
+
+services:
+  automission:
+    build:
+      context: .
+      dockerfile: ./dockerfiles/automission/Dockerfile
+    environment:
+      - FOXLINK_DATABASE_HOST=140.118.157.9
+      - FOXLINK_DATABASE_PORT=27001
+      - FOXLINK_DATABASE_USER=root
+      - FOXLINK_DATABASE_PASSWORD=AqqhQ993VNto
+      - FOXLINK_DATABASE_NAME=testing_foxlink
+      - MQTT_BROKER=140.118.157.9
+      - MQTT_PORT=1883
+      - SERVER_URL=http://140.118.157.9:8080
+      - TESTING_LOG=True
+      - RESPONSE_START=5
+      - RESPONSE_END=60
+      - REPAIR_START=5
+      - REPAIR_END=240
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  autoworker:
+    build:
+      context: .
+      dockerfile: ./dockerfiles/autoworker/Dockerfile
+    environment:
+      - FOXLINK_DATABASE_HOST=140.118.157.9
+      - FOXLINK_DATABASE_PORT=27001
+      - FOXLINK_DATABASE_USER=root
+      - FOXLINK_DATABASE_PASSWORD=AqqhQ993VNto
+      - FOXLINK_DATABASE_NAME=testing_foxlink
+      - MQTT_BROKER=140.118.157.9
+      - MQTT_PORT=1883
+      - SERVER_URL=http://140.118.157.9:8080
+      - TESTING_LOG=True
+      - RESPONSE_START=5
+      - RESPONSE_END=60
+      - REPAIR_START=5
+      - REPAIR_END=240
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

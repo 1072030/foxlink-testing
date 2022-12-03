@@ -10,6 +10,9 @@ then
     # reset mqtt server
     bash scripts/systems/clean_server.sh emqx
     bash scripts/systems/start_server.sh emqx
+
+    bash scripts/systems/clean_server.sh incubator
+    bash scripts/systems/start_server.sh incubator
 else
     echo "please specify the valid condition..."
     exit 0
