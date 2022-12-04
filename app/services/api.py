@@ -1,20 +1,29 @@
 import logging
 import time
-from pymysql import NULL
+
 import requests
 import json
+from passlib.context import CryptContext
+from pymysql import NULL
 from app.env import SERVER_URL
 from app.services.log import create_log, kill_process
 from datetime import datetime
 
+ROUNDS = 535000
+PWD_SCHEMA = "sha256_crypt"
+PWD_SALT = "F0XL1NKPWDHaSH"
+pwd_context = CryptContext(schemes=[PWD_SCHEMA], deprecated="auto")
+PASSWORD = pwd_context.hash("foxlink", salt=PWD_SALT)
+
 
 def login(username, id, timeout=60, logger=logging):
+    global PASSWORD
     status = None
     token = None
 
     payloads = {
         'username': username,
-        'password': 'foxlink',
+        'password': PASSWORD,
         'client_id': id
     }
 
@@ -41,7 +50,7 @@ def login(username, id, timeout=60, logger=logging):
         }
     )
 
-    time.sleep(5)
+    time.sleep(2)
 
     return status, token
 
@@ -74,7 +83,7 @@ def logout(token, username, reason='OffWork', timeout=60, logger=logging):
         }
     )
 
-    time.sleep(5)
+    time.sleep(2)
 
     return status
 
@@ -123,7 +132,7 @@ def mission_action(token, mission_id, action, username, timeout=60, logger=loggi
             'time': datetime.now(),
         }
     )
-    time.sleep(5)
+    time.sleep(2)
 
     return status
 

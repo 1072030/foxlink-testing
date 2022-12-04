@@ -268,6 +268,8 @@ def worker(_username, _behavier, _id, speed=1):
             if (j > 10):
                 i += 1
                 j = 0
+                if (action == "finish"):
+                    mqtt_sync(200, f'foxlink/users/{worker_uuid}/missions')
                 create_log(
                     param={
                         'mission_id': NULL,
