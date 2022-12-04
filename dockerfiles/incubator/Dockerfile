@@ -9,6 +9,10 @@ RUN apt install -y htop
 RUN apt install -y bmon
 # 
 RUN apt-get install curl -y
+#
+RUN apt-get install procps -y
+#
+# RUN apt-get install iputils-ping
 # 
 RUN apt-get install ffmpeg libsm6 libxext6 -y
 #

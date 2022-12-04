@@ -30,7 +30,7 @@ then
     python -m app.utils.create_time -f $SCENARIO -s "$SHIFT_TIME_T2"
 elif [ $SCENARIO == "test7" ];
 then
-    python -m app.utils.create_time -f $SCENARIO -b 150
+    python -m app.utils.create_time -f $SCENARIO -b 60
 else
     # echo "skipping the create time scenario ....."
     # create time
