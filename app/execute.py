@@ -21,7 +21,7 @@ def entry_point():
     signal.signal(signal.SIGINT, cleanup_childrens)
     signal.signal(signal.SIGTERM, cleanup_childrens)
 
-    start_time = datetime.now()
+    start_time = datetime.utcnow()
     processes = [
         *create_worker_behaviour_process(),
     ]
@@ -36,7 +36,7 @@ def entry_point():
     for p in processes:
         p.join()
 
-    logger.warning("Duration: {}".format(datetime.now() - start_time))
+    logger.warning("Duration: {}".format(datetime.utcnow() - start_time))
     logger.warning("============= DONE ==============")
   
 

@@ -32,7 +32,7 @@ def on_subscribe(client, userdata, flags, rc):
             'action': "mqtt:subscribe",
             'description': f'status:{rc}',
             'mqtt_detail': f'{userdata}',
-            'time': datetime.now()
+            'time': datetime.utcnow()
         }
     )
 
@@ -67,7 +67,7 @@ def on_message(client, userdata, msg):
             'action': "mqtt:receive",
             'description': f"retain: {retain}, duplicate: {duplicate}",
             'mqtt_detail': f"userdata:{userdata}\n, msg:{msg}",
-            'time': datetime.now()
+            'time': datetime.utcnow()
         }
     )
 
@@ -100,7 +100,7 @@ def on_connect(c, userdata, flags, rc):
             'action': "mqtt:connect",
             'description': f'{"success" if rc == 0 else "failed" }. status:{rc}',
             'mqtt_detail': f"{userdata}",
-            'time': datetime.now()
+            'time': datetime.utcnow()
         }
     )
 
@@ -119,7 +119,7 @@ def on_disconnect(client, userdata, rc):
             'action': "mqtt:disconnect",
             'description': f'{"success" if rc == 0 else "failed" }. status:{rc}',
             'mqtt_detail': f"{userdata}",
-            'time': datetime.now()
+            'time': datetime.utcnow()
         }
     )
     is_connect = False
@@ -138,7 +138,7 @@ def register_topic(topic):
             'action': "subscribe",
             'description': f'@{topic}',
             'mqtt_detail': "",
-            'time': datetime.now()
+            'time': datetime.utcnow()
         }
     )
 
@@ -168,7 +168,7 @@ def mqtt_get(action, topic):
             'action': action,
             'description': f'get from mqtt.',
             'mqtt_detail': f'',
-            'time': datetime.now()
+            'time': datetime.utcnow()
         }
     )
 
@@ -280,6 +280,8 @@ def worker(_username, _behavier, _id, speed=1):
         if status and 200 <= status and status <= 299:
             logger.info(f"action:{action} completed.")
             i += 1
+            if action == "finish" and j > 10:
+                mqtt_sync(200, f'foxlink/users/{worker_uuid}/missions')
             j = 0
         elif (status and 400 <= status <= 499):
             logger.warning(f"{username} skipping for error exceed")
@@ -297,7 +299,7 @@ def worker(_username, _behavier, _id, speed=1):
                         'action': action,
                         'description': f'skipping for error exceed',
                         'mqtt_detail': f'',
-                        'time': datetime.now()
+                        'time': datetime.utcnow()
                     }
                 )
 

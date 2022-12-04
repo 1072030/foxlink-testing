@@ -24,8 +24,8 @@ class CreateTime():
         self.filename = filename
         self.data = []
         self.start = 30
-        self.now = datetime.now()
-        self.event_start_time = datetime.now() + timedelta(seconds=self.start)
+        self.now = datetime.utcnow()
+        self.event_start_time = datetime.utcnow() + timedelta(seconds=self.start)
         self.disconn = disconn
         self.conn_time = conn_time
         # print("now:", self.now, "\nstart:", self.start, "\nevent_start_time:", self.event_start_time,"\ndisconn:", self.disconn)

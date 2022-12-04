@@ -51,7 +51,7 @@ class EventThread(threading.Thread):
         repair_time = self.get_repair_time()
             
         sql = """INSERT INTO {}.foxlinkevents (line, device_name, category, start_time, end_time, message, start_file_name, end_file_name, project, event_id)
-                VALUES ({},'{}',{},'{}',{},'{}',{},{},'{}',{})""".format(FOXLINK_DATABASE_NAME, self.line, self.device_name, 192, datetime.now(), NULL, '2#插针站故障', NULL, NULL, self.project, self.event_id)
+                VALUES ({},'{}',{},'{}',{},'{}',{},{},'{}',{})""".format(FOXLINK_DATABASE_NAME, self.line, self.device_name, 192, datetime.utcnow(), NULL, '2#插针站故障', NULL, NULL, self.project, self.event_id)
         query_testing(sql)
 
         if self.wait_repair:
@@ -65,5 +65,5 @@ class EventThread(threading.Thread):
 
         time.sleep(repair_time)
 
-        sql = f"""UPDATE {FOXLINK_DATABASE_NAME}.foxlinkevents SET end_time='{datetime.now()}' WHERE line='{self.line}' AND project='{self.project}' AND device_name='{self.device_name}' AND event_id={self.event_id} AND end_time IS NULL"""
+        sql = f"""UPDATE {FOXLINK_DATABASE_NAME}.foxlinkevents SET end_time='{datetime.utcnow()}' WHERE line='{self.line}' AND project='{self.project}' AND device_name='{self.device_name}' AND event_id={self.event_id} AND end_time IS NULL"""
         query_testing(sql)

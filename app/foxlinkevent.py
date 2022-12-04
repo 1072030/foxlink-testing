@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 from app.services.database import database, FoxlinkEvent,DATABASE_URI
 logger = logging.getLogger("FOXLINKEVENT")
 async def generator(event,speed):
-    current_time =  datetime.now() - timedelta(hours=8)
+    current_time =  datetime.utcnow() - timedelta(hours=8)
     start_time = datetime.strptime(event['start_time'], '%Y-%m-%d %H:%M:%S') - timedelta(hours=8)
     end_time = None if event['end_time'] == '' else datetime.strptime(event['end_time'], '%Y-%m-%d %H:%M:%S') - timedelta(hours=8)
     if event['status'] == 'create':

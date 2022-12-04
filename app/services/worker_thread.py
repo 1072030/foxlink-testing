@@ -18,15 +18,19 @@ class WorkerThread(threading.Thread):
         self.client = None
     
     def update_shift(self):
-        hour = (datetime.now() + timedelta(hours=8)).hour
+        hour = (datetime.utcnow() + timedelta(hours=8)).hour
+        # minute = (datetime.utcnow() + timedelta(hours=8)).minute
         
         if self.shift_type != self.get_shift_type():
             time1 = f'{(hour+1)%24}:00:00'
             time2 = f'{hour%24}:00:00'
             
-            set_shift_time(self.shift_type, time1, time2)
+            # time1 = f'{hour}:{minute+5}:00'
+            # time2 = f'{hour}:{minute}:00'
+            
+            if self.user_id == 1: set_shift_time(self.shift_type, time1, time2)
             self.shift_type = self.get_shift_type()
-            set_shift_time(self.shift_type, time2, time1)
+            if self.user_id == 1: set_shift_time(self.shift_type, time2, time1)
             
             create_log(
                 param = {
@@ -36,7 +40,7 @@ class WorkerThread(threading.Thread):
                     'action': '',
                     'description': f'shift',
                     'mqtt_detail': f'{self.shift_type}, beg: {time2}, end: {time1}',
-                    'time': datetime.now(),
+                    'time': datetime.utcnow(),
                 }
             )
             
@@ -51,9 +55,13 @@ class WorkerThread(threading.Thread):
             
 
     def get_shift_type(self):
-        if datetime.now().hour % 2 == 0:
+        if datetime.utcnow().hour % 2 == 0:
             return 0
         return 1
+        
+        # if datetime.utcnow().minute %5 == 0:
+        #     return 0
+        # return 1
 
     def get_action(self):
         r = random.randint(1, 100)
@@ -117,7 +125,7 @@ class WorkerThread(threading.Thread):
                         'action': '',
                         'description': f'receive_mqtt',
                         'mqtt_detail': info,
-                        'time': datetime.now(),
+                        'time': datetime.utcnow(),
                     }
                 )
 
@@ -138,7 +146,7 @@ class WorkerThread(threading.Thread):
                                 'action': 'no_action',
                                 'description': f'receive_mqtt',
                                 'mqtt_detail': info,
-                                'time': datetime.now(),
+                                'time': datetime.utcnow(),
                             }
                         )
 

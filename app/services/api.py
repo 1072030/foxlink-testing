@@ -46,7 +46,7 @@ def login(username, id, timeout=60, logger=logging):
             'action': 'login',
             'description': f'{status},{token}',
             'mqtt_detail': '',
-            'time': datetime.now(),
+            'time': datetime.utcnow(),
         }
     )
 
@@ -79,7 +79,7 @@ def logout(token, username, reason='OffWork', timeout=60, logger=logging):
             'action': 'logout',
             'description': f'{status}',
             'mqtt_detail': '',
-            'time': datetime.now(),
+            'time': datetime.utcnow(),
         }
     )
 
@@ -129,7 +129,7 @@ def mission_action(token, mission_id, action, username, timeout=60, logger=loggi
             'action': action,
             'description': f'API_{status}',
             'mqtt_detail': f'{result}',
-            'time': datetime.now(),
+            'time': datetime.utcnow(),
         }
     )
     time.sleep(2)
