@@ -19,7 +19,7 @@ else
 fi
 
 
-sleep 5
+sleep 2
 echo "Running $SCENARIO...."
 
 if [ $SCENARIO == "test5" ];
