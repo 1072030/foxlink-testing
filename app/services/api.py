@@ -9,7 +9,7 @@ from app.env import SERVER_URL
 from app.services.log import create_log, kill_process
 from datetime import datetime
 
-ROUNDS = 535000
+ROUNDS = 10000
 PWD_SCHEMA = "sha256_crypt"
 PWD_SALT = "F0XL1NKPWDHaSH"
 pwd_context = CryptContext(schemes=[PWD_SCHEMA], deprecated="auto")
