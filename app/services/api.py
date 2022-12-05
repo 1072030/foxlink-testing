@@ -13,7 +13,7 @@ ROUNDS = 10000
 PWD_SCHEMA = "sha256_crypt"
 PWD_SALT = "F0XL1NKPWDHaSH"
 pwd_context = CryptContext(schemes=[PWD_SCHEMA], deprecated="auto")
-PASSWORD = pwd_context.hash("foxlink", salt=PWD_SALT)
+PASSWORD = pwd_context.hash("foxlink", salt=PWD_SALT, rounds=ROUNDS)
 
 
 def login(username, id, timeout=60, logger=logging):
