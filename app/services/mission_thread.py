@@ -55,7 +55,7 @@ class EventThread(threading.Thread):
         query_testing(sql)
 
         if self.wait_repair:
-            for _ in range(50):
+            for _ in range(1000):
                 sql = f"""SELECT id FROM testing_api.missions m  WHERE device='{self.project}@{self.line}@{self.device_name}' AND repair_beg_date IS NOT NULL AND repair_end_date IS NULL AND is_done = 0"""
                 data = query_server(sql)
                 if len(data) != 0:

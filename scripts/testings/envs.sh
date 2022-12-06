@@ -1,5 +1,5 @@
 . scripts/envs.sh
 set -a
-SCENARIO="test1"
-SCENARIO_DB_TAG="test1"
+SCENARIO="test8"
+SCENARIO_DB_TAG="test8"
 set +a

@@ -12,7 +12,8 @@ then
     fi
 
     echo "running command in container: $2"
-    docker exec $2 bash scripts/rebuild_database.sh
+    bash scripts/server_exec.sh \
+    "docker exec $2 bash scripts/rebuild_database.sh"
 
 else
     echo "Unknown server to db to initialize..."

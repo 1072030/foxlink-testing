@@ -1,11 +1,12 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import threading
 import time
+import random
 from pymysql import NULL
-from app.services.api import login, logout, mission_action
+from app.services.api import login, logout, mission_action, set_shift_time
 from app.services.log import create_log
 from pymysql import NULL
-from app.env import MQTT_BROKER, MQTT_PORT, SCENARIO
+from app.env import MQTT_BROKER, MQTT_PORT, SCENARIO, RESPONSE_START, RESPONSE_END
 from paho.mqtt import client as mqtt_client
 from datetime import datetime
 import time
@@ -66,7 +67,7 @@ def on_message(client, userdata, msg):
             'username': username,
             'action': "mqtt:receive",
             'description': f"retain: {retain}, duplicate: {duplicate}",
-            'mqtt_detail': f"userdata:{userdata}\n, msg:{msg}",
+            'mqtt_detail': f"{topic_results} userdata:{userdata}\n, msg:{msg}",
             'time': datetime.utcnow()
         }
     )
@@ -153,24 +154,30 @@ def mqtt_get(action, topic):
     if (not topic in topic_results.keys()):
         register_topic(topic)
 
-    while (len(topic_results[topic]) == 0):
-        # logger.info(f"waiting for mqtt message with action:{action}")
-        time.sleep(3)
+    result = None
+    if SCENARIO == "test8":
+        if len(topic_results[topic]):
+            result = topic_results[topic][0]
+    else:
+        while (len(topic_results[topic]) == 0):
+            # logger.info(f"waiting for mqtt message with action:{action}")
+            time.sleep(3)
 
-    # result = topic_results[topic].pop(0)
-    result = topic_results[topic][0]
+        # result = topic_results[topic].pop(0)
+        result = topic_results[topic][0]
 
-    create_log(
-        param={
-            'mission_id': result,
-            'mqtt': f'{topic}',
-            'username': username,
-            'action': action,
-            'description': f'get from mqtt.',
-            'mqtt_detail': f'',
-            'time': datetime.utcnow()
-        }
-    )
+    if result:
+        create_log(
+            param={
+                'mission_id': result,
+                'mqtt': f'{topic}',
+                'username': username,
+                'action': action,
+                'description': f'get from mqtt.',
+                'mqtt_detail': f'',
+                'time': datetime.utcnow()
+            }
+        )
 
     return result
 
@@ -186,22 +193,88 @@ topic_results = {}
 is_connect = False
 username = "Unspecified"
 
-def get_status_info(status, fail_count, action):
+def take_action(action, mission_id, topic):
+    global token, username, topic_results
+    time.sleep(get_response_time())
+    fail_count = 0
+    while True:
+        is_success, fail_count = get_status_info(mission_action(token, mission_id, action, username), fail_count)
+        if is_success:
+            if  action in ["reject", "finish"] or (topic.find('move-rescue-station') != -1 and action == 'start'):
+                topic_results[topic].pop(0)
+            break
+        else:
+            time.sleep(2)
+
+def get_status_info(status, fail_count):
     if status and status >= 200 and status <= 299:
         return True, 0
     
-    fail_count += 1
-    if (SCENARIO == 'testLogin' and action == 'logout') or SCENARIO == 'test6':
-        if fail_count == 10:
-            return True, 0
-        return False, fail_count
-    
-    return False, 0
+    elif status and status >= 400 and status <= 499:
+        fail_count += 1
+        if fail_count == 5:
+            return True, fail_count
 
+    return False, fail_count
+
+def get_action():
+    r = random.randint(1, 100)
+    
+    if r <= 90:
+        return "accept"
+
+    if r <= 95:
+        return "reject"
+    
+    return None
+
+def get_response_time():
+    return random.randint(RESPONSE_START, RESPONSE_END)
+
+def get_shift_type():
+    if datetime.utcnow().hour % 2 == 0:
+        return 0
+    return 1
+
+def update_shift(current_shift_type):
+    hour = (datetime.utcnow() + timedelta(hours=8)).hour
+    
+    if current_shift_type != get_shift_type():
+        time1 = f'{(hour+1)%24}:00:00'
+        time2 = f'{hour%24}:00:00'
+        
+        set_shift_time(current_shift_type, time1, time2)
+        current_shift_type = get_shift_type()
+        set_shift_time(current_shift_type, time2, time1)
+
+    return current_shift_type
+
+def check_user_status(current_shift_type, worker_shift_type, worker_uuid):
+    global token, username
+    timeout = 30
+    
+    current_shift_type = update_shift(current_shift_type)
+    
+    if not token and  current_shift_type == worker_shift_type:
+        while True:
+            status, token = login(username, worker_uuid, timeout)
+            if status and status >= 200 and status < 299:
+                break
+            
+    if token and current_shift_type != worker_shift_type:
+        fail_count = 0
+        while True:
+            is_success, fail_count = get_status_info(logout(token, username, timeout=timeout), fail_count)
+            if is_success:
+                token = None
+                break
+            
+    return current_shift_type
+    
 def worker(_username, _behavier, _id, speed=1):
     # if (not _username == "C0001"):
     #     return
-    global client, topic_results, is_connect, username, logger
+    global client, topic_results, is_connect, username, logger, token
 
     logger = logging.getLogger(_username)
     username = _username
@@ -222,86 +295,121 @@ def worker(_username, _behavier, _id, speed=1):
 
     register_topic(f'foxlink/users/{worker_uuid}/move-rescue-station')
     register_topic(f'foxlink/users/{worker_uuid}/missions')
-
-    i = 0
-    fetch = True
-    fail_count = 0
-    while i < len(behavier):
-        status = None
-        action = behavier[i]['api']
-        response_time = behavier[i]['response_time']
-        timeout = 30  # seconds
-
-        logger.info(f"action:{action} begin to with timeout({timeout})")
-
-        time.sleep(float(response_time) / speed)
-
-        if action == 'login':
-            status, token = login(username, worker_uuid, timeout)
-
-        elif action == 'logout':
-            status = logout(token, username, timeout=timeout)
-
-        elif action in ['accept', 'reject']:
+    
+    if SCENARIO == "test8":
+        current_shift_type = (get_shift_type() + 1) % 2
+        while True:
+            current_shift_type = check_user_status(current_shift_type, worker_shift_type=behavier[0]['api'], worker_uuid=worker_uuid)
+            action = get_action()
             topic = f'foxlink/users/{worker_uuid}/missions'
             mission_id = mqtt_get(action, topic)
-            status = mission_action(
-                token,
-                mission_id,
-                action,
-                username,
-                timeout=timeout
-            )
-            mqtt_sync(status, topic)
+            if mission_id:
+                if action == "accept":
+                    take_action("accept", mission_id, topic)
+                    take_action("start", mission_id, topic)
+                    take_action("finish", mission_id, topic)
+                elif action == "reject":
+                    take_action("reject", mission_id, topic)
+                else:
+                    create_log(
+                        param = {
+                            'mission_id': mission_id,
+                            'mqtt': topic,
+                            'username': username,
+                            'action': 'no_action',
+                            'description': f'',
+                            'mqtt_detail': '',
+                            'time': datetime.utcnow(),
+                        }
+                    )
 
-        elif action == 'start' and behavier[i - 1]['api'] == 'finish':
             topic = f'foxlink/users/{worker_uuid}/move-rescue-station'
+            action = "start"
             mission_id = mqtt_get(action, topic)
-            status = mission_action(
-                token,
-                mission_id,
-                action,
-                username,
-                timeout=timeout
-            )
-            mqtt_sync(status, topic)
+            if mission_id:
+                take_action(action, mission_id, topic)
+                
+            time.sleep(10)
+    else:
+        i = 0
+        fetch = True
+        fail_count = 0
+        while i < len(behavier):
+            status = None
+            action = behavier[i]['api']
+            response_time = behavier[i]['response_time']
+            timeout = 30  # seconds
 
-        elif action in ['start', 'finish']:
-            status = mission_action(token, mission_id, action, username, timeout=timeout)
+            logger.info(f"action:{action} begin to with timeout({timeout})")
 
-        logger.info(f"ended {action} with status:{status}")
-        
-        # is_success, fail_count = get_status_info(status, fail_count, action)
-        # is_success = True
-        # if is_success:
-        #     logger.info(f"action:{action} completed.")
-        #     i += 1
+            time.sleep(float(response_time) / speed)
 
-        if status and 200 <= status and status <= 299:
-            logger.info(f"action:{action} completed.")
-            i += 1
-            if action == "finish" and j > 10:
-                mqtt_sync(200, f'foxlink/users/{worker_uuid}/missions')
-            j = 0
-        elif (status and 400 <= status <= 499):
-            logger.warning(f"{username} skipping for error exceed")
-            j += 1
-            if (j > 10):
-                i += 1
-                j = 0
-                if (action == "finish"):
-                    mqtt_sync(200, f'foxlink/users/{worker_uuid}/missions')
-                create_log(
-                    param={
-                        'mission_id': NULL,
-                        'mqtt': '',
-                        'username': username,
-                        'action': action,
-                        'description': f'skipping for error exceed',
-                        'mqtt_detail': f'',
-                        'time': datetime.utcnow()
-                    }
+            if action == 'login':
+                status, token = login(username, worker_uuid, timeout)
+
+            elif action == 'logout':
+                status = logout(token, username, timeout=timeout)
+
+            elif action in ['accept', 'reject']:
+                topic = f'foxlink/users/{worker_uuid}/missions'
+                mission_id = mqtt_get(action, topic)
+                status = mission_action(
+                    token,
+                    mission_id,
+                    action,
+                    username,
+                    timeout=timeout
                 )
+                mqtt_sync(status, topic)
+
+            elif action == 'start' and behavier[i - 1]['api'] == 'finish':
+                topic = f'foxlink/users/{worker_uuid}/move-rescue-station'
+                mission_id = mqtt_get(action, topic)
+                status = mission_action(
+                    token,
+                    mission_id,
+                    action,
+                    username,
+                    timeout=timeout
+                )
+                mqtt_sync(status, topic)
+
+            elif action in ['start', 'finish']:
+                status = mission_action(token, mission_id, action, username, timeout=timeout)
+
+            logger.info(f"ended {action} with status:{status}")
+            
+            # is_success, fail_count = get_status_info(status, fail_count, action)
+            # is_success = True
+            # if is_success:
+            #     logger.info(f"action:{action} completed.")
+            #     i += 1
+
+            if status and 200 <= status and status <= 299:
+                logger.info(f"action:{action} completed.")
+                i += 1
+                if action == "finish" and j > 10:
+                    mqtt_sync(200, f'foxlink/users/{worker_uuid}/missions')
+                j = 0
+            elif (status and 400 <= status <= 499):
+                logger.warning(f"{username} skipping for error exceed")
+                if (j > 10):
+                    i += 1
+                    create_log(
+                        param={
+                            'mission_id': NULL,
+                            'mqtt': '',
+                            'username': username,
+                            'action': action,
+                            'description': f'skipping for error exceed',
+                            'mqtt_detail': f'',
+                            'time': datetime.utcnow()
+                        }
+                    )
+                else:
+                    j += 1
+
+            time.sleep(1)
 
     logger.info("completed all tasks, leaving")
 

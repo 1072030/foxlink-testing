@@ -15,7 +15,7 @@ def on_connect(client, userdata, flags, rc):
 def connect_mqtt(client_id) -> mqtt_client:
     client = mqtt_client.Client(client_id)
     client.on_connect = on_connect
-    client.connect('127.0.0.1', 1883)
+    client.connect('140.118.157.9', 1883)
     return client
 
 def subscribe(client_id, username, action, response_time):
@@ -37,7 +37,7 @@ def subscribe(client_id, username, action, response_time):
         client.disconnect()
 
     client = connect_mqtt(client_id)
-    client.subscribe([(f"foxlink/users/1/move-rescue-station", 2)])
+    client.subscribe([(f"foxlink/users/100601/missions", 2)])
     client.on_message = on_message
     client.loop_forever()
     return mission_id

@@ -5,6 +5,7 @@ import multiprocessing
 import app.foxlinkevent as fevents
 from datetime import datetime
 from app.services.worker import worker
+import time
 import logging
 
 logger = logging.getLogger("execute-server")
@@ -25,8 +26,10 @@ def entry_point():
     processes = [
         *create_worker_behaviour_process(),
     ]
+
     for p in processes:
         p.start()
+        time.sleep(0.1)
 
     event_generator = multiprocessing.Process(target=fevents.entry_point)
     event_generator.start()

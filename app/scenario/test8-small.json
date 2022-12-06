@@ -1,0 +1,42 @@
+{
+    "worker_condition": "",
+    "foxlinkEvent": [],
+    "worker_behavier": [
+        {
+            "username": "C0001",
+            "behavier": [
+                {
+                    "api": 0,
+                    "response_time": 0
+                }
+            ]
+        },
+        {
+            "username": "C0002",
+            "behavier": [
+                {
+                    "api": 0,
+                    "response_time": 0
+                }
+            ]
+        },
+        {
+            "username": "C0003",
+            "behavier": [
+                {
+                    "api": 0,
+                    "response_time": 0
+                }
+            ]
+        }
+    ],
+    "network_status": {
+        "server_network": [
+            {
+                "status": "disconnect",
+                "start_time": "2022-12-06 00:43:24",
+                "end_time": "2022-12-06 00:44:24"
+            }
+        ]
+    }
+}
