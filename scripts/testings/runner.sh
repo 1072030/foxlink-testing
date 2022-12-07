@@ -6,11 +6,11 @@ then
     # reset foxlink database
     bash scripts/systems/clean_server.sh db
     bash scripts/systems/start_server.sh db $SCENARIO_DB_TAG
-
+    sleep 5
     # reset mqtt server
     bash scripts/systems/clean_server.sh emqx
     bash scripts/systems/start_server.sh emqx
-
+    sleep 10
     bash scripts/systems/clean_server.sh incubator
     bash scripts/systems/start_server.sh incubator
 elif [[ $1 == "reset" ]];
@@ -22,7 +22,7 @@ then
     # reset mqtt server
     bash scripts/systems/clean_server.sh emqx
     bash scripts/systems/start_server.sh emqx
-
+    sleep 10
     bash scripts/systems/clean_server.sh incubator
     bash scripts/systems/start_server.sh incubator
     sleep 10
@@ -65,13 +65,13 @@ then
     python -m app.utils.create_time -f $SCENARIO -s "$SHIFT_TIME_T2"
 elif [ $SCENARIO == "test7" ];
 then
-    python -m app.utils.create_time -f $SCENARIO -b 150
+    python -m app.utils.create_time -f $SCENARIO -b 60
 else
-    # echo "skipping the create time scenario ....."
+    echo "skipping the create time scenario ....."
     # create time
-    python -m app.utils.create_time -f $SCENARIO 
+    #python -m app.utils.create_time -f $SCENARIO 
 fi
 
 
 # run test case
-python -m app.execute $SCENARIO -n 1 
+python -m app.execute $SCENARIO -n 1

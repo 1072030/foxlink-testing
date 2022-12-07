@@ -23,21 +23,21 @@ def entry_point():
     signal.signal(signal.SIGTERM, cleanup_childrens)
 
     start_time = datetime.utcnow()
-    processes = [
-        *create_worker_behaviour_process(),
-    ]
+   # processes = [
+   #     *create_worker_behaviour_process(),
+   # ]
 
-    for p in processes:
-        p.start()
-        time.sleep(0.1)
+   # for p in processes:
+   #     p.start()
+   #     time.sleep(0.1)
 
     event_generator = multiprocessing.Process(target=fevents.entry_point)
     event_generator.start()
     event_generator.join()
     logger.warning("FOxliNk EveNt Complete...")
 
-    for p in processes:
-        p.join()
+   # for p in processes:
+   #     p.join()
 
     logger.warning("Duration: {}".format(datetime.utcnow() - start_time))
     logger.warning("============= DONE ==============")

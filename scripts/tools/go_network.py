@@ -5,12 +5,12 @@ from print_color import print
 
 
 if __name__ == '__main__':
-    t = 20
+    t = 60
     if len(sys.argv) > 1:
         t = int(sys.argv[1])
     
     
-    subprocess.run(["docker", "network", "disconnect", "incubator-network", "mysql-test"])
+    subprocess.run(["docker", "network", "disconnect", "incubator-network", "incubator"])
     subprocess.run(["docker", "network", "disconnect", "incubator-network", "emqx-test"])
     print("===== Network Disconnected =====", tag='log', tag_color='green', color='magenta')
     # 60s
@@ -29,7 +29,7 @@ if __name__ == '__main__':
         time.sleep(1)
         t -= 1
         print_str.append(print_str.pop(0))
-    subprocess.run(["docker", "network", "connect", "incubator-network", "mysql-test"])
+    subprocess.run(["docker", "network", "connect", "incubator-network", "incubator"])
     subprocess.run(["docker", "network", "connect", "incubator-network", "emqx-test"])
     print("===== Network Connected =====", tag='log', tag_color='green', color='magenta')
     

@@ -9,47 +9,39 @@ incubator(){
         IMAGE="incubator:$1"
     fi
 
-    bash scripts/server_exec.sh\
-    "docker run -dt \
-        -v $BACKEND_SERVER_DOCKER_CONTEXT:/code/ \
+
+
+   docker run -dt \
+        -v $BACKEND_SERVER_DOCKER_CONTEXT:/app/ \
         --env-file "$BACKEND_SERVER_DOCKER_CONTEXT/.env" \
-        -p 8080:80 \
+        -p 80:80 \
         --network $DOCKER_NETWORK \
         --name incubator \
-        $IMAGE \
-        python -m app.server_uvicorn"
+        incubator:init \
+        bash -c "mkdir -p /app/logs && python -m app.server_uvicorn"
 
 }
 
 db(){
-
-    if [[ -z $1 ]];
-    then
-        IMAGE="mysql-test:init"
-    else
-        IMAGE="mysql-test:$1"
-    fi
     
-    bash scripts/server_exec.sh \
-    "docker run -dt \
+    docker run -dt \
         -p 27001:3306 \
         -e MYSQL_DATABASE=foxlink \
         -e MYSQL_ROOT_PASSWORD=AqqhQ993VNto \
+	-v /root/foxlink-testing/mysql-db:/var/lib/mysql\
         --name mysql-test \
         --network $DOCKER_NETWORK \
-        $IMAGE"
+        mysql:8
 
 }
 
 emqx(){
-    bash scripts/server_exec.sh \
-    "docker run -dt \
-        -p 18083:18083 \
-        -p 1883:1883 \
-        -p 8083:8083 \
+    docker run -dt \
+        -p 1883:18083 \
+        -p 18083:1883 \
         --name emqx-test \
         --network $DOCKER_NETWORK\
-        emqx/emqx"
+        emqx/emqx
 }
 
 if [[ $1 == "incubator" ]];
@@ -63,9 +55,11 @@ then
     emqx $2
 elif [[ $1 == "all" ]];
 then
-    incubator $2
     db $2
+    sleep 5
     emqx $2
+    sleep 5
+    incubator $2
 else
     echo "Unknown server to start..."
 fi
