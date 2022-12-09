@@ -1,0 +1,247 @@
+{
+    "worker_condition": "員工專職表_FQ-9車間_20221207test.xlsx",
+    "foxlinkEvent": [
+        {
+            "status": "create",
+            "event_id": 0,
+            "category": 192,
+            "message": "2#插针站故障",
+            "project": "D2Y E75",
+            "line": 1.0,
+            "device_name": "Device_1",
+            "start_time": "2022-12-07 14:27:38",
+            "end_time": ""
+        },
+        {
+            "status": "create",
+            "event_id": 1,
+            "category": 192,
+            "message": "2#插针站故障",
+            "project": "D2Y E75",
+            "line": 1.0,
+            "device_name": "Device_2",
+            "start_time": "2022-12-07 14:27:38",
+            "end_time": ""
+        },
+        {
+            "status": "create",
+            "event_id": 2,
+            "category": 192,
+            "message": "2#插针站故障",
+            "project": "D2Y E75",
+            "line": 1.0,
+            "device_name": "Device_5",
+            "start_time": "2022-12-07 14:27:38",
+            "end_time": ""
+        },
+        {
+            "status": "create",
+            "event_id": 3,
+            "category": 192,
+            "message": "2#插针站故障",
+            "project": "D2Y E75",
+            "line": 1.0,
+            "device_name": "Device_6",
+            "start_time": "2022-12-07 14:27:38",
+            "end_time": ""
+        },
+        {
+            "status": "create",
+            "event_id": 4,
+            "category": 192,
+            "message": "2#插针站故障",
+            "project": "D2Y E75",
+            "line": 1.0,
+            "device_name": "Device_7",
+            "start_time": "2022-12-07 14:27:38",
+            "end_time": ""
+        },
+        {
+            "status": "create",
+            "event_id": 5,
+            "category": 192,
+            "message": "2#插针站故障",
+            "project": "D2Y E75",
+            "line": 1.0,
+            "device_name": "Device_8",
+            "start_time": "2022-12-07 14:27:38",
+            "end_time": ""
+        },
+        {
+            "status": "create",
+            "event_id": 6,
+            "category": 192,
+            "message": "2#插针站故障",
+            "project": "D2Y E75",
+            "line": 1.0,
+            "device_name": "Device_9",
+            "start_time": "2022-12-07 14:27:38",
+            "end_time": ""
+        },
+        {
+            "status": "create",
+            "event_id": 7,
+            "category": 192,
+            "message": "2#插针站故障",
+            "project": "D2Y E75",
+            "line": 1.0,
+            "device_name": "Device_10",
+            "start_time": "2022-12-07 14:27:38",
+            "end_time": ""
+        },
+        {
+            "status": "create",
+            "event_id": 8,
+            "category": 192,
+            "message": "2#插针站故障",
+            "project": "D2Y E75",
+            "line": 1.0,
+            "device_name": "Device_11",
+            "start_time": "2022-12-07 14:27:38",
+            "end_time": ""
+        },
+        {
+            "status": "create",
+            "event_id": 9,
+            "category": 192,
+            "message": "2#插针站故障",
+            "project": "D2Y E75",
+            "line": 1.0,
+            "device_name": "Device_12",
+            "start_time": "2022-12-07 14:27:38",
+            "end_time": ""
+        },
+        {
+            "status": "create",
+            "event_id": 10,
+            "category": 192,
+            "message": "2#插针站故障",
+            "project": "D2Y E75",
+            "line": 1.0,
+            "device_name": "Device_13",
+            "start_time": "2022-12-07 14:27:38",
+            "end_time": ""
+        },
+        {
+            "status": "create",
+            "event_id": 11,
+            "category": 192,
+            "message": "2#插针站故障",
+            "project": "D2Y E75",
+            "line": 2.0,
+            "device_name": "Device_1",
+            "start_time": "2022-12-07 14:27:38",
+            "end_time": ""
+        },
+        {
+            "status": "create",
+            "event_id": 12,
+            "category": 192,
+            "message": "2#插针站故障",
+            "project": "D2Y E75",
+            "line": 2.0,
+            "device_name": "Device_2",
+            "start_time": "2022-12-07 14:27:38",
+            "end_time": ""
+        },
+        {
+            "status": "create",
+            "event_id": 13,
+            "category": 192,
+            "message": "2#插针站故障",
+            "project": "D2Y E75",
+            "line": 2.0,
+            "device_name": "Device_5",
+            "start_time": "2022-12-07 14:27:38",
+            "end_time": ""
+        },
+        {
+            "status": "create",
+            "event_id": 14,
+            "category": 192,
+            "message": "2#插针站故障",
+            "project": "D2Y E75",
+            "line": 2.0,
+            "device_name": "Device_6",
+            "start_time": "2022-12-07 14:27:38",
+            "end_time": ""
+        },
+        {
+            "status": "create",
+            "event_id": 15,
+            "category": 192,
+            "message": "2#插针站故障",
+            "project": "D2Y E75",
+            "line": 2.0,
+            "device_name": "Device_7",
+            "start_time": "2022-12-07 14:27:38",
+            "end_time": ""
+        },
+        {
+            "status": "create",
+            "event_id": 16,
+            "category": 192,
+            "message": "2#插针站故障",
+            "project": "D2Y E75",
+            "line": 2.0,
+            "device_name": "Device_8",
+            "start_time": "2022-12-07 14:27:38",
+            "end_time": ""
+        },
+        {
+            "status": "create",
+            "event_id": 17,
+            "category": 192,
+            "message": "2#插针站故障",
+            "project": "D2Y E75",
+            "line": 2.0,
+            "device_name": "Device_9",
+            "start_time": "2022-12-07 14:27:38",
+            "end_time": ""
+        },
+        {
+            "status": "create",
+            "event_id": 18,
+            "category": 192,
+            "message": "2#插针站故障",
+            "project": "D2Y E75",
+            "line": 2.0,
+            "device_name": "Device_10",
+            "start_time": "2022-12-07 14:27:38",
+            "end_time": ""
+        },
+        {
+            "status": "create",
+            "event_id": 19,
+            "category": 192,
+            "message": "2#插针站故障",
+            "project": "D2Y E75",
+            "line": 2.0,
+            "device_name": "Device_11",
+            "start_time": "2022-12-07 14:27:38",
+            "end_time": ""
+        },
+        {
+            "status": "create",
+            "event_id": 20,
+            "category": 192,
+            "message": "2#插针站故障",
+            "project": "D2Y E75",
+            "line": 2.0,
+            "device_name": "Device_12",
+            "start_time": "2022-12-07 14:27:38",
+            "end_time": ""
+        },
+        {
+            "status": "create",
+            "event_id": 21,
+            "category": 192,
+            "message": "2#插针站故障",
+            "project": "D2Y E75",
+            "line": 2.0,
+            "device_name": "Device_13",
+            "start_time": "2022-12-07 14:27:38",
+            "end_time": ""
+        }
+    ]
+}

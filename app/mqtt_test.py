@@ -15,7 +15,7 @@ def on_connect(client, userdata, flags, rc):
 def connect_mqtt(client_id) -> mqtt_client:
     client = mqtt_client.Client(client_id)
     client.on_connect = on_connect
-    client.connect('140.118.157.9', 1883)
+    client.connect('ntust.foxlink.com.tw', 1883)
     return client
 
 def subscribe(client_id, username, action, response_time):

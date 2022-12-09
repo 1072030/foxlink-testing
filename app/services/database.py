@@ -37,7 +37,7 @@ class MainMeta(ormar.ModelMeta):
 
 class FoxlinkEvent(ormar.Model):
     class Meta(MainMeta):
-        pass
+        tablename="foxlink_event_new"
 
     id: int = ormar.Integer(primary_key=True)
     line: str = ormar.String(max_length=100, nullable=True)

@@ -1,6 +1,6 @@
 set -a
 # paths
-BACKEND_SERVER_DOCKER_CONTEXT="/home/ntust-foxlink/foxlink-v9-2/foxlink-api-backend"
+BACKEND_SERVER_DOCKER_CONTEXT="/home/ntust-foxlink/foxlink-factory/foxlink-api-backend-beta-v9/"
 BACKEND_SERVER_DOCKER_FILE="$(pwd)/dockerfiles/incubator/Dockerfile" 
 TESTING_DB_DOCKER_CONTEXT="$(pwd)/dockerfiles/mysql-test/"
 TESTING_DB_DOCKER_FILE="$(pwd)/dockerfiles/mysql-test/Dockerfile"

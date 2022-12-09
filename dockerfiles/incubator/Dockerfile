@@ -1,6 +1,6 @@
 FROM python:3.8-slim
 # 
-WORKDIR /code
+WORKDIR /app
 #
 RUN apt update
 #
@@ -20,6 +20,6 @@ RUN apt-get install libmariadb-dev -y
 #
 RUN apt-get install gcc -y 
 # 
-COPY requirements.txt /code/
+COPY requirements.txt /app/
 # 
-RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
+RUN pip install --no-cache-dir --upgrade -r /app/requirements.txt

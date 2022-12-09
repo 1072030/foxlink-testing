@@ -8,9 +8,10 @@ from datetime import datetime, timedelta
 from app.services.database import database, FoxlinkEvent,DATABASE_URI
 logger = logging.getLogger("FOXLINKEVENT")
 async def generator(event,speed):
-    current_time =  datetime.utcnow() - timedelta(hours=8)
+    current_time =  datetime.utcnow()
     start_time = datetime.strptime(event['start_time'], '%Y-%m-%d %H:%M:%S') - timedelta(hours=8)
     end_time = None if event['end_time'] == '' else datetime.strptime(event['end_time'], '%Y-%m-%d %H:%M:%S') - timedelta(hours=8)
+    print((start_time - current_time).total_seconds())
     if event['status'] == 'create':
         await asyncio.sleep(float(max((start_time - current_time).total_seconds(),0))/speed) 
         while True:

@@ -1,21 +1,18 @@
 . scripts/systems/envs.sh
 
 incubator(){
-    bash scripts/server_exec.sh \
-    "docker container kill incubator
-    docker container rm incubator"
+    docker container kill incubator
+    docker container rm incubator
 }
 
 db(){
-    bash scripts/server_exec.sh \
-    "docker container kill mysql-test
-    docker container rm mysql-test"
+    docker container kill mysql-test
+    docker container rm mysql-test
 }
 
 emqx(){
-    bash scripts/server_exec.sh \
-    "docker container kill emqx-test
-    docker container rm emqx-test"
+    docker container kill emqx-test
+    docker container rm emqx-test
 }
 
 if [[ $1 == "incubator" ]];
