@@ -2,16 +2,13 @@
 
 if [[ $1 == "local" ]];
 then
-
     # reset foxlink database
     bash scripts/systems/clean_server.sh db
     bash scripts/systems/start_server.sh db $SCENARIO_DB_TAG
     # reset mqtt server
     bash scripts/systems/clean_server.sh emqx
     bash scripts/systems/start_server.sh emqx
-    sleep 10
-    bash scripts/systems/clean_server.sh incubator
-    bash scripts/systems/start_server.sh incubator
+
 elif [[ $1 == "reset" ]];
 then
     # reset foxlink database
@@ -65,7 +62,6 @@ elif [ $SCENARIO == "test7" ];
 then
     python -m app.utils.create_time -f $SCENARIO -b 60
 else
-    echo "skipping the create time scenario ....."
     # create time
     python -m app.utils.create_time -f $SCENARIO 
 fi

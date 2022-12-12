@@ -1,1 +1,1 @@
-ps aux | grep -ie execute | awk '{print $2}' | xargs kill -9 
+ps aux | grep -ie  "/home/ntust-foxlink/miniconda3/envs/foxlink/bin/python" | awk '{print $2}' | xargs kill -9 

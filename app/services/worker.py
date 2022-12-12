@@ -77,8 +77,16 @@ def on_connect(c, userdata, flags, rc):
     global is_connect, username, topic_results, client
     if (rc == 0):
         logger.info(f"Connection successful: Broker")
-        for topic in topic_results.keys():
-            client.subscribe(topic, 2)
+        if(len(topic_results)>0):
+            while True:
+                try:
+                    for topic in [ old for old in topic_results.keys()]:
+                        client.subscribe(topic, 2)
+                except:
+                    continue
+                else:
+                    break
+
         is_connect = True
     elif (rc == 1):
         logger.warn("Connection refused - incorrect protocol version")
