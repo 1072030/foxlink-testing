@@ -6,7 +6,9 @@ TESTING_DB_DOCKER_CONTEXT="$(pwd)/dockerfiles/mysql-test/"
 TESTING_DB_DOCKER_FILE="$(pwd)/dockerfiles/mysql-test/Dockerfile"
 
 # networks
-DOCKER_NETWORK=incubator-network
+# DOCKER_NETWORK=incubator-network
+DOCKER_NETWORK=foxlink-api-backend-beta-v9_backend
+
 
 # database
 DB_STARTUP_NAME=foxlink

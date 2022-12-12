@@ -17,8 +17,7 @@ incubator(){
         -p 80:80 \
         --network $DOCKER_NETWORK \
         --name incubator \
-        incubator:init \
-        bash -c "mkdir -p /app/logs && python -m app.server_uvicorn"
+        incubator:init
 
 }
 
@@ -37,7 +36,6 @@ db(){
 
 emqx(){
     docker run -dt \
-        -p 1883:18083 \
         -p 18083:1883 \
         --name emqx-test \
         --network $DOCKER_NETWORK\
