@@ -7,13 +7,23 @@ commit(){
         exit -1
     fi
 
-    if [[ ! -z $1 ]];
+    if [[ $1 == "comit" ]];
     then
-        docker commit $CONTAINER $CONTAINER:$1
+        if [[ ! -z $2 ]];
+        then
+            docker commit $CONTAINER $CONTAINER:$2
+            TAG=$2
+        else
+            echo "commit requires a tag..."
+            exit -1
+        fi
+    elif [[ ! -z $1 ]];
+    then
         TAG=$1
     else
         TAG=init
     fi
+    
 }
 
 restart(){
@@ -25,38 +35,38 @@ restart(){
 incubator(){
     CONTAINER=incubator
     SERVER=incubator
-    commit $1
+    commit $1 $2
     restart
 }
 
 db(){
     CONTAINER=mysql-test
     SERVER=db
-    commit $1
+    commit $1 $2
     restart
 }
 
 emqx(){
     CONTAINER=emqx-test
     SERVER=emqx
-    commit $1
+    commit $1 $2
     restart
 }
 
 if [[ $1 == "incubator" ]];
 then
-    incubator $2
+    incubator $2 $3
 elif [[ $1 == "db" ]];
 then
-    db $2
+    db $2 $3
 elif [[ $1 == "emqx" ]];
 then
-    emqx $2
-elif [[ $1 == "all" ]];
+    emqx $2 $3
+elif [[ $1 == "init" ]];
 then
-    incubator $2
-    db $2
-    emqx $2
+    incubator
+    db
+    emqx
 else
     echo "Unknown server to start..."
 fi
