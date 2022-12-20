@@ -2,47 +2,12 @@
 
 if [[ $1 == "local" ]];
 then
-
     # reset foxlink database
     bash scripts/systems/clean_server.sh db
     bash scripts/systems/start_server.sh db $SCENARIO_DB_TAG
-    sleep 5
     # reset mqtt server
     bash scripts/systems/clean_server.sh emqx
     bash scripts/systems/start_server.sh emqx
-    sleep 10
-    bash scripts/systems/clean_server.sh incubator
-    bash scripts/systems/start_server.sh incubator
-elif [[ $1 == "reset" ]];
-then
-    # reset foxlink database
-    bash scripts/systems/clean_server.sh db
-    bash scripts/systems/start_server.sh db init
-
-    # reset mqtt server
-    bash scripts/systems/clean_server.sh emqx
-    bash scripts/systems/start_server.sh emqx
-    sleep 10
-    bash scripts/systems/clean_server.sh incubator
-    bash scripts/systems/start_server.sh incubator
-    sleep 10
-    bash scripts/tools/init_db.sh event
-    bash scripts/tools/init_db.sh api incubator
-    exit 0
-
-elif [[ $1 == "template" ]];
-then
-    # reset foxlink database
-    bash scripts/systems/clean_server.sh db
-    bash scripts/systems/start_server.sh db template
-
-    # reset mqtt server
-    bash scripts/systems/clean_server.sh emqx
-    bash scripts/systems/start_server.sh emqx
-
-    bash scripts/systems/clean_server.sh incubator
-    bash scripts/systems/start_server.sh incubator
-    exit 0
 else
     echo "please specify the valid condition..."
     exit 0
@@ -69,7 +34,7 @@ then
 else
     echo "skipping the create time scenario ....."
     # create time
-    #python -m app.utils.create_time -f $SCENARIO 
+    python -m app.utils.create_time -f $SCENARIO 
 fi
 
 

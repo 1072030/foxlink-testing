@@ -9,20 +9,23 @@ incubator(){
         IMAGE="incubator:$1"
     fi
 
-
-
    docker run -dt \
         -v $BACKEND_SERVER_DOCKER_CONTEXT:/app/ \
         --env-file "$BACKEND_SERVER_DOCKER_CONTEXT/.env" \
         -p 80:80 \
         --network $DOCKER_NETWORK \
         --name incubator \
-        incubator:init
-
+        $IMAGE
 }
 
 db(){
     
+    if [[ -z $1 ]];
+    then
+        IMAGE="mysql-test:init"
+    else
+        IMAGE="mysql-test:$1"
+    fi
     docker run -dt \
         -p 27001:3306 \
         -e MYSQL_DATABASE=foxlink \
@@ -30,12 +33,12 @@ db(){
 	-v /root/foxlink-testing/mysql-db:/var/lib/mysql\
         --name mysql-test \
         --network $DOCKER_NETWORK \
-        mysql:8
-
+        $IMAGE
 }
 
 emqx(){
     docker run -dt \
+        -p 1883:18083 \
         -p 18083:1883 \
         --name emqx-test \
         --network $DOCKER_NETWORK\
@@ -50,7 +53,7 @@ then
     db $2
 elif [[ $1 == "emqx" ]];
 then
-    emqx $2
+    emqx
 elif [[ $1 == "all" ]];
 then
     db $2

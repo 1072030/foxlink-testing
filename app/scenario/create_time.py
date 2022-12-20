@@ -15,8 +15,8 @@ class CreateTime():
         self.filename = filename 
         self.data = [] 
         self.start = start 
-        self.now = datetime.now() 
-        self.event_start_time = datetime.now() + timedelta(seconds=self.start) 
+        self.now = datetime.utcnow() 
+        self.event_start_time = datetime.utcnow() + timedelta(seconds=self.start) 
         self.interval = 15
 
     # load test file
