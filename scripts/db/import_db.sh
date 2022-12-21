@@ -4,9 +4,14 @@ USER=root
 DB_NAME=foxlink
 PASSWD=AqqhQ993VNto
 
-echo "Specify the Database Path:"
-read DB_BACKUP_NAME
-echo "Importing DB..."
+
+if [[ -z $1 ]];
+then
+    echo "missiong target database..."
+    exit 0
+fi
+
+echo "Importing DB... $1"
 mysqladmin -h $HOST -P $PORT -u $USER --password=$PASSWD -p create $DB_NAME
 mysql -h $HOST -P $PORT -u $USER -p $DB_NAME --password=$PASSWD < $1
 echo "Done !"
