@@ -30,7 +30,6 @@ db(){
         -p 27001:3306 \
         -e MYSQL_DATABASE=foxlink \
         -e MYSQL_ROOT_PASSWORD=AqqhQ993VNto \
-	-v /root/foxlink-testing/mysql-db:/var/lib/mysql\
         --name mysql-test \
         --network $DOCKER_NETWORK \
         $IMAGE

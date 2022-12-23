@@ -32,7 +32,6 @@ elif [ $SCENARIO == "test7" ];
 then
     python -m app.utils.create_time -f $SCENARIO -b 60
 else
-    echo "skipping the create time scenario ....."
     # create time
     python -m app.utils.create_time -f $SCENARIO 
 fi
