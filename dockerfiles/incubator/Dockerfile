@@ -25,7 +25,9 @@ RUN apt-get install net-tools -y
 RUN apt-get install git -y
 #
 RUN apt-get install iputils-ping -y
+#
+RUN apt-get install wget -y
 # 
 COPY requirements.txt /app/
 # 
-RUN pip install --no-cache-dir --upgrade -r /app/requirements.txt
+RUN pip install --no-deps --no-cache-dir --upgrade -r /app/requirements.txt

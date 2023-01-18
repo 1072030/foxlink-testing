@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 import threading
 import time
 import random
+import os
 from pymysql import NULL
 from app.services.api import login, logout, mission_action, set_shift_time
 from app.services.log import create_log
@@ -77,10 +78,10 @@ def on_connect(c, userdata, flags, rc):
     global is_connect, username, topic_results, client
     if (rc == 0):
         logger.info(f"Connection successful: Broker")
-        if(len(topic_results)>0):
+        if (len(topic_results) > 0):
             while True:
                 try:
-                    for topic in [ old for old in topic_results.keys()]:
+                    for topic in [old for old in topic_results.keys()]:
                         client.subscribe(topic, 2)
                 except:
                     continue
@@ -201,6 +202,7 @@ topic_results = {}
 is_connect = False
 username = "Unspecified"
 
+
 def take_action(action, mission_id, topic):
     global token, username, topic_results
     time.sleep(get_response_time())
@@ -208,16 +210,17 @@ def take_action(action, mission_id, topic):
     while True:
         is_success, fail_count = get_status_info(mission_action(token, mission_id, action, username), fail_count)
         if is_success:
-            if  action in ["reject", "finish"] or (topic.find('move-rescue-station') != -1 and action == 'start'):
+            if action in ["reject", "finish"] or (topic.find('move-rescue-station') != -1 and action == 'start'):
                 topic_results[topic].pop(0)
             break
         else:
             time.sleep(2)
 
+
 def get_status_info(status, fail_count):
     if status and status >= 200 and status <= 299:
         return True, 0
-    
+
     elif status and status >= 400 and status <= 499:
         fail_count += 1
         if fail_count == 5:
@@ -225,50 +228,55 @@ def get_status_info(status, fail_count):
 
     return False, fail_count
 
+
 def get_action():
     r = random.randint(1, 100)
-    
+
     if r <= 90:
         return "accept"
 
     if r <= 95:
         return "reject"
-    
+
     return None
+
 
 def get_response_time():
     return random.randint(RESPONSE_START, RESPONSE_END)
+
 
 def get_shift_type():
     if datetime.utcnow().hour % 2 == 0:
         return 0
     return 1
 
+
 def update_shift(current_shift_type):
     hour = (datetime.utcnow() + timedelta(hours=8)).hour
-    
+
     if current_shift_type != get_shift_type():
         time1 = f'{(hour+1)%24}:00:00'
         time2 = f'{hour%24}:00:00'
-        
+
         set_shift_time(current_shift_type, time1, time2)
         current_shift_type = get_shift_type()
         set_shift_time(current_shift_type, time2, time1)
 
     return current_shift_type
 
+
 def check_user_status(current_shift_type, worker_shift_type, worker_uuid):
     global token, username
     timeout = 30
-    
+
     current_shift_type = update_shift(current_shift_type)
-    
-    if not token and  current_shift_type == worker_shift_type:
+
+    if not token and current_shift_type == worker_shift_type:
         while True:
             status, token = login(username, worker_uuid, timeout)
             if status and status >= 200 and status < 299:
                 break
-            
+
     if token and current_shift_type != worker_shift_type:
         fail_count = 0
         while True:
@@ -276,16 +284,18 @@ def check_user_status(current_shift_type, worker_shift_type, worker_uuid):
             if is_success:
                 token = None
                 break
-            
+
     return current_shift_type
-    
+
+
 def worker(_username, _behavier, _id, speed=1):
-    
+
     # if (not _username == "C0001"):
     #     return
     global client, topic_results, is_connect, username, logger, token
 
     logger = logging.getLogger(_username)
+    os.makedirs("logs", exist_ok=True)
     logger.addHandler(logging.FileHandler(f'logs/{_username}.log', mode="w"))
     username = _username
     behavier = _behavier
@@ -305,11 +315,12 @@ def worker(_username, _behavier, _id, speed=1):
 
         register_topic(f'foxlink/users/{worker_uuid}/move-rescue-station')
         register_topic(f'foxlink/users/{worker_uuid}/missions')
-        
+
         if SCENARIO == "test8":
             current_shift_type = (get_shift_type() + 1) % 2
             while True:
-                current_shift_type = check_user_status(current_shift_type, worker_shift_type=behavier[0]['api'], worker_uuid=worker_uuid)
+                current_shift_type = check_user_status(
+                    current_shift_type, worker_shift_type=behavier[0]['api'], worker_uuid=worker_uuid)
                 action = get_action()
                 topic = f'foxlink/users/{worker_uuid}/missions'
                 mission_id = mqtt_get(action, topic)
@@ -322,7 +333,7 @@ def worker(_username, _behavier, _id, speed=1):
                         take_action("reject", mission_id, topic)
                     else:
                         create_log(
-                            param = {
+                            param={
                                 'mission_id': mission_id,
                                 'mqtt': topic,
                                 'username': username,
@@ -338,7 +349,7 @@ def worker(_username, _behavier, _id, speed=1):
                 mission_id = mqtt_get(action, topic)
                 if mission_id:
                     take_action(action, mission_id, topic)
-                    
+
                 time.sleep(10)
         else:
             i = 0
@@ -388,7 +399,7 @@ def worker(_username, _behavier, _id, speed=1):
                     status = mission_action(token, mission_id, action, username, timeout=timeout)
 
                 logger.info(f"ended {action} with status:{status}")
-                
+
                 # is_success, fail_count = get_status_info(status, fail_count, action)
                 # is_success = True
                 # if is_success:
