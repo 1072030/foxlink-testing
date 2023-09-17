@@ -20,7 +20,7 @@ cursor.close()
 
 connection = mysql.connector.connect(
 host = '127.0.0.1',
-database = 'testing_api',
+database = 'foxlink',
 user = 'root',
 password = 'AqqhQ993VNto',
 port='27001',
@@ -28,11 +28,11 @@ buffered= True)
 
 cursor = connection.cursor()
 
-mySql_insert_query = f"""SELECT * FROM testing_api.audit_log_headers"""
+mySql_insert_query = f"""SELECT * FROM foxlink.audit_log_headers"""
 cursor.execute(mySql_insert_query)
 data_audit = cursor.fetchall()
 
-mySql_insert_query = f"""SELECT m.device, m.worker, m.is_done , m.accept_recv_date ,m.repair_beg_date ,m.repair_end_date ,m.created_date, m.notify_send_date, m.id  FROM testing_api.missions m """
+mySql_insert_query = f"""SELECT m.device, m.worker, m.is_done , m.accept_recv_date ,m.repair_beg_date ,m.repair_end_date ,m.created_date, m.notify_send_date, m.id  FROM foxlink.missions m """
 cursor.execute(mySql_insert_query)
 data_mission = cursor.fetchall()
 
@@ -100,13 +100,13 @@ period = []
 for m in mission_id:
     cursor = connection.cursor()
 
-    mySql_insert_query = f"""SELECT created_date from testing_api.audit_log_headers a WHERE a.record_pk = '{m}' and a.`action` = 'MISSION_ASSIGNED'"""
+    mySql_insert_query = f"""SELECT created_date from foxlink.audit_log_headers a WHERE a.record_pk = '{m}' and a.`action` = 'MISSION_ASSIGNED'"""
     cursor.execute(mySql_insert_query)
     assign_date = cursor.fetchone()
     if assign_date:
         assign_date = pd.DataFrame(assign_date)[0][0]
     
-    mySql_insert_query = f"""SELECT created_date from testing_api.audit_log_headers a WHERE a.record_pk = '{m}' and a.`action` = 'MISSION_ACCEPTED'"""
+    mySql_insert_query = f"""SELECT created_date from foxlink.audit_log_headers a WHERE a.record_pk = '{m}' and a.`action` = 'MISSION_ACCEPTED'"""
     cursor.execute(mySql_insert_query)
     accept_date = cursor.fetchone()
     if accept_date:
@@ -140,7 +140,7 @@ print('\n\n========== MISSION ASSIGN -> ACCEPTED AVG ==========')
 print(sum(period) / len(period))
 
 cursor = connection.cursor()
-mySql_insert_query = f"""SELECT * FROM testing_api.missions m WHERE repair_beg_date IS NULL AND is_done = 0"""
+mySql_insert_query = f"""SELECT * FROM foxlink.missions m WHERE repair_beg_date IS NULL AND is_done = 0"""
 cursor.execute(mySql_insert_query)
 not_assign_mission = cursor.fetchall()
 

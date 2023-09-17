@@ -3,8 +3,8 @@
 if [[ $1 == "local" ]];
 then
     # reset foxlink database
-    bash scripts/systems/clean_server.sh db
-    bash scripts/systems/start_server.sh db $SCENARIO_DB_TAG
+    # bash scripts/systems/clean_server.sh db
+    # bash scripts/systems/start_server.sh db $SCENARIO_DB_TAG
     # reset mqtt server
     bash scripts/systems/clean_server.sh emqx
     bash scripts/systems/start_server.sh emqx
@@ -30,7 +30,7 @@ then
     python -m app.utils.create_time -f $SCENARIO -s "$SHIFT_TIME_T2"
 elif [ $SCENARIO == "test7" ];
 then
-    python -m app.utils.create_time -f $SCENARIO -b 60
+    python -m app.utils.create_time -f $SCENARIO -b 150
 else
     # create time
     python -m app.utils.create_time -f $SCENARIO 

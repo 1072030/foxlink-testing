@@ -64,5 +64,5 @@ def main(test_filename,start=30):
     test_time.output_data()
 
 # Dispatch, AutoEnd
-main("Dispatch") 
-
+#main("Dispatch") 
+main('EventEnd')

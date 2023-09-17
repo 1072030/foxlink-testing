@@ -3,7 +3,7 @@ from app.utils.queryDB import query_server, query_testing
 from app.services.mission_thread import MissionThread
 
 def get_device():
-    sql = f"""SELECT project, line, device_name from testing_api.devices d WHERE workshop = 1 and project != 'rescue'"""
+    sql = "SELECT project, line, device_name from foxlink.devices d WHERE workshop = 1 and project != 'rescue' and flag=True"
     data = query_server(sql)
     
     device = pd.DataFrame(data)

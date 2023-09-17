@@ -50,13 +50,13 @@ class EventThread(threading.Thread):
     def run(self):
         repair_time = self.get_repair_time()
             
-        sql = """INSERT INTO {}.foxlinkevents (line, device_name, category, start_time, end_time, message, start_file_name, end_file_name, project, event_id)
+        sql = """INSERT INTO {}.foxlink_event_new (line, device_name, category, start_time, end_time, message, start_file_name, end_file_name, project, event_id)
                 VALUES ({},'{}',{},'{}',{},'{}',{},{},'{}',{})""".format(FOXLINK_DATABASE_NAME, self.line, self.device_name, 192, datetime.utcnow(), NULL, '2#插针站故障', NULL, NULL, self.project, self.event_id)
         query_testing(sql)
 
         if self.wait_repair:
             for _ in range(1000):
-                sql = f"""SELECT id FROM testing_api.missions m  WHERE device='{self.project}@{self.line}@{self.device_name}' AND repair_beg_date IS NOT NULL AND repair_end_date IS NULL AND is_done = 0"""
+                sql = f"""SELECT id FROM foxlink.missions m  WHERE device='{self.project}@{self.line}@{self.device_name}' AND repair_beg_date IS NOT NULL AND repair_end_date IS NULL AND is_done = 0"""
                 data = query_server(sql)
                 if len(data) != 0:
                     logging.warning(sql)
@@ -65,5 +65,5 @@ class EventThread(threading.Thread):
 
         time.sleep(repair_time)
 
-        sql = f"""UPDATE {FOXLINK_DATABASE_NAME}.foxlinkevents SET end_time='{datetime.utcnow()}' WHERE line='{self.line}' AND project='{self.project}' AND device_name='{self.device_name}' AND event_id={self.event_id} AND end_time IS NULL"""
+        sql = f"""UPDATE {FOXLINK_DATABASE_NAME}.foxlink_event_new SET end_time='{datetime.utcnow()}' WHERE line='{self.line}' AND project='{self.project}' AND device_name='{self.device_name}' AND event_id={self.event_id} AND end_time IS NULL"""
         query_testing(sql)

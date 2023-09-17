@@ -246,6 +246,7 @@ def get_response_time():
 
 
 def get_shift_type():
+    #由現實時間來切換日夜班 每小時換班一次
     if datetime.utcnow().hour % 2 == 0:
         return 0
     return 1
@@ -266,9 +267,10 @@ def update_shift(current_shift_type):
 
 
 def check_user_status(current_shift_type, worker_shift_type, worker_uuid):
+    #確認換班狀態
     global token, username
     timeout = 30
-
+    #更新換班狀態 current_shift_type = 1
     current_shift_type = update_shift(current_shift_type)
 
     if not token and current_shift_type == worker_shift_type:
@@ -317,14 +319,16 @@ def worker(_username, _behavier, _id, speed=1):
         register_topic(f'foxlink/users/{worker_uuid}/missions')
 
         if SCENARIO == "test8":
+            #check換班時間 0 和 1
             current_shift_type = (get_shift_type() + 1) % 2
             while True:
+
                 current_shift_type = check_user_status(
-                    current_shift_type, worker_shift_type=behavier[0]['api'], worker_uuid=worker_uuid)
+                current_shift_type, worker_shift_type=behavier[0]['api'], worker_uuid=worker_uuid)
                 action = get_action()
                 topic = f'foxlink/users/{worker_uuid}/missions'
                 mission_id = mqtt_get(action, topic)
-                if mission_id:
+                if mission_id and token is not None:
                     if action == "accept":
                         take_action("accept", mission_id, topic)
                         take_action("start", mission_id, topic)
@@ -347,7 +351,8 @@ def worker(_username, _behavier, _id, speed=1):
                 topic = f'foxlink/users/{worker_uuid}/move-rescue-station'
                 action = "start"
                 mission_id = mqtt_get(action, topic)
-                if mission_id:
+
+                if mission_id and token is not None:
                     take_action(action, mission_id, topic)
 
                 time.sleep(10)

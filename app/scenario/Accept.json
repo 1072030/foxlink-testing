@@ -1,0 +1,50 @@
+{
+    "worker_condition": "員工專職表_FQ-9車間_Basic.xlsx",
+    "foxlinkEvent": [
+        {
+            "status": "create",
+            "event_id": 1,
+            "category": 192,
+            "message": "2#插针站故障",
+            "project": "N84",
+            "line": 1.0,
+            "device_name": "Device_5",
+            "start_time": "2023-01-18 11:31:27",
+            "end_time": ""
+        },
+        {
+            "status": "create",
+            "event_id": 2,
+            "category": 192,
+            "message": "2#插针站故障",
+            "project": "N84",
+            "line": 1.0,
+            "device_name": "Device_6",
+            "start_time": "2023-01-18 11:31:27",
+            "end_time": ""
+        },
+        {
+            "status": "create",
+            "event_id": 3,
+            "category": 192,
+            "message": "2#插针站故障",
+            "project": "N84",
+            "line": 1.0,
+            "device_name": "Device_7",
+            "start_time": "2023-01-18 11:31:27",
+            "end_time": ""
+        },
+        {
+            "status": "create",
+            "event_id": 4,
+            "category": 192,
+            "message": "2#插针站故障",
+            "project": "N84",
+            "line": 1.0,
+            "device_name": "Device_8",
+            "start_time": "2023-01-18 11:31:27",
+            "end_time": ""
+        }
+    ],
+    "worker_behavier":[]
+}

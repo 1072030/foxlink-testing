@@ -4,7 +4,7 @@ from datetime import datetime
 
 connection = mysql.connector.connect(
 host = 'localhost',
-database = 'foxlink',
+database = 'testing_foxlink',
 user = 'root',
 password = '123456',
 port='27001',
@@ -12,7 +12,7 @@ buffered= True)
 
 cursor = connection.cursor()
 
-mySql_insert_query = f"""SELECT * FROM foxlink.testinglogs"""
+mySql_insert_query = f"""SELECT * FROM testing_foxlink.testinglogs"""
 cursor.execute(mySql_insert_query)
 data_log = cursor.fetchall()
 

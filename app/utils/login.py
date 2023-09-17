@@ -6,7 +6,7 @@ ip = '127.0.0.1'
 
 connection = mysql.connector.connect(
 host = ip,
-database = 'testing_api',
+database = 'foxlink',
 user = 'root',
 password = 'AqqhQ993VNto',
 port='27001',
@@ -14,7 +14,7 @@ buffered= True)
 
 cursor = connection.cursor()
 
-mySql_insert_query = f"""SELECT * FROM testing_api.audit_log_headers"""
+mySql_insert_query = f"""SELECT * FROM foxlink.audit_log_headers"""
 cursor.execute(mySql_insert_query)
 data = cursor.fetchall()
 cursor.close()

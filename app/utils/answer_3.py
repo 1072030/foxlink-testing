@@ -3,23 +3,23 @@ import pandas as pd
 from datetime import datetime
 
 connection = mysql.connector.connect(
-host = 'localhost',
-database = 'foxlink',
+host = '192.168.0.113',
+database = 'testing_foxlink',
 user = 'root',
-password = '123456',
+password = 'AqqhQ993VNto',
 port='27001',
 buffered= True)
 
 cursor = connection.cursor()
 
-mySql_insert_query = f"""SELECT * FROM foxlink.testinglogs"""
+mySql_insert_query = f"""SELECT * FROM testing_foxlink.testinglogs"""
 cursor.execute(mySql_insert_query)
 data_log = cursor.fetchall()
 
 cursor.close()
 
 connection = mysql.connector.connect(
-host = '140.118.157.9',
+host = '192.168.0.113',
 database = 'foxlink',
 user = 'root',
 password = 'AqqhQ993VNto',
@@ -28,11 +28,11 @@ buffered= True)
 
 cursor = connection.cursor()
 
-mySql_insert_query = f"""SELECT * FROM foxlink.auditlogheaders"""
+mySql_insert_query = f"""SELECT * FROM foxlink.audit_log_headers"""
 cursor.execute(mySql_insert_query)
 data_audit = cursor.fetchall()
 
-mySql_insert_query = f"""SELECT e.mission, event_id, device, user, repair_start_date, repair_end_date, created_date, event_start_date, event_end_date  from foxlink.missionevents e
+mySql_insert_query = f"""SELECT e.mission, event_id, device, user, repair_start_date, repair_end_date, created_date, event_start_date, event_end_date  from foxlink.mission_events e
 inner join foxlink.missions m on m.id = e.mission
 inner join foxlink.missions_users mu on m.id = mu.mission 
 order by mission"""

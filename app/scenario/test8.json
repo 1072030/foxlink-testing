@@ -1,5 +1,5 @@
 {
-    "worker_condition": "",
+    "worker_condition": "員工專職表_FQ-9車間_test8.xlsx",
     "foxlinkEvent": [],
     "worker_behavier": [
         {
@@ -1195,8 +1195,8 @@
         "server_network": [
             {
                 "status": "disconnect",
-                "start_time": "2022-12-06 09:44:32",
-                "end_time": "2022-12-06 09:45:32"
+                "start_time": "2023-07-11 06:33:15",
+                "end_time": "2023-07-11 06:34:15"
             }
         ]
     }
