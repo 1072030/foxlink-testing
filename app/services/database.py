@@ -35,9 +35,25 @@ class MainMeta(ormar.ModelMeta):
     database = database
 
 
-class FoxlinkEvent(ormar.Model):
+# class FoxlinkEvent(ormar.Model):
+#     class Meta(MainMeta):
+#         tablename="foxlink_event_new"
+
+#     id: int = ormar.Integer(primary_key=True)
+#     line: str = ormar.String(max_length=100, nullable=True)
+#     device_name: str = ormar.String(max_length=100, nullable=True)
+#     category: int = ormar.Integer(nullable=True)
+#     start_time: datetime = ormar.DateTime(nullable=True)
+#     end_time: datetime = ormar.DateTime(nullable=True)
+#     message: str = ormar.String(max_length=100, nullable=True)
+#     start_file_name: str = ormar.String(max_length=10, nullable=True)
+#     end_file_name: str = ormar.String(max_length=10, nullable=True)
+#     project: str = ormar.String(max_length=100, nullable=True)
+#     event_id: int = ormar.Integer()
+
+class D2yEvent(ormar.Model):
     class Meta(MainMeta):
-        tablename="foxlink_event_new"
+        tablename="d2y_event_new"
 
     id: int = ormar.Integer(primary_key=True)
     line: str = ormar.String(max_length=100, nullable=True)
@@ -51,6 +67,87 @@ class FoxlinkEvent(ormar.Model):
     project: str = ormar.String(max_length=100, nullable=True)
     event_id: int = ormar.Integer()
 
+class D52Event(ormar.Model):
+    class Meta(MainMeta):
+        tablename="d52_event_new"
+
+    id: int = ormar.Integer(primary_key=True)
+    line: str = ormar.String(max_length=100, nullable=True)
+    device_name: str = ormar.String(max_length=100, nullable=True)
+    category: int = ormar.Integer(nullable=True)
+    start_time: datetime = ormar.DateTime(nullable=True)
+    end_time: datetime = ormar.DateTime(nullable=True)
+    message: str = ormar.String(max_length=100, nullable=True)
+    start_file_name: str = ormar.String(max_length=10, nullable=True)
+    end_file_name: str = ormar.String(max_length=10, nullable=True)
+    project: str = ormar.String(max_length=100, nullable=True)
+    event_id: int = ormar.Integer()
+
+
+class D7xEvent(ormar.Model):
+    class Meta(MainMeta):
+        tablename="d7x_event_new"
+
+    id: int = ormar.Integer(primary_key=True)
+    line: str = ormar.String(max_length=100, nullable=True)
+    device_name: str = ormar.String(max_length=100, nullable=True)
+    category: int = ormar.Integer(nullable=True)
+    start_time: datetime = ormar.DateTime(nullable=True)
+    end_time: datetime = ormar.DateTime(nullable=True)
+    message: str = ormar.String(max_length=100, nullable=True)
+    start_file_name: str = ormar.String(max_length=10, nullable=True)
+    end_file_name: str = ormar.String(max_length=10, nullable=True)
+    project: str = ormar.String(max_length=100, nullable=True)
+    event_id: int = ormar.Integer()
+
+class N104Event(ormar.Model):
+    class Meta(MainMeta):
+        tablename="n104_event_new"
+
+    id: int = ormar.Integer(primary_key=True)
+    line: str = ormar.String(max_length=100, nullable=True)
+    device_name: str = ormar.String(max_length=100, nullable=True)
+    category: int = ormar.Integer(nullable=True)
+    start_time: datetime = ormar.DateTime(nullable=True)
+    end_time: datetime = ormar.DateTime(nullable=True)
+    message: str = ormar.String(max_length=100, nullable=True)
+    start_file_name: str = ormar.String(max_length=10, nullable=True)
+    end_file_name: str = ormar.String(max_length=10, nullable=True)
+    project: str = ormar.String(max_length=100, nullable=True)
+    event_id: int = ormar.Integer()
+
+
+class N84Event(ormar.Model):
+    class Meta(MainMeta):
+        tablename="n84_event_new"
+
+    id: int = ormar.Integer(primary_key=True)
+    line: str = ormar.String(max_length=100, nullable=True)
+    device_name: str = ormar.String(max_length=100, nullable=True)
+    category: int = ormar.Integer(nullable=True)
+    start_time: datetime = ormar.DateTime(nullable=True)
+    end_time: datetime = ormar.DateTime(nullable=True)
+    message: str = ormar.String(max_length=100, nullable=True)
+    start_file_name: str = ormar.String(max_length=10, nullable=True)
+    end_file_name: str = ormar.String(max_length=10, nullable=True)
+    project: str = ormar.String(max_length=100, nullable=True)
+    event_id: int = ormar.Integer()
+
+class X61Event(ormar.Model):
+    class Meta(MainMeta):
+        tablename="x61_event_new"
+
+    id: int = ormar.Integer(primary_key=True)
+    line: str = ormar.String(max_length=100, nullable=True)
+    device_name: str = ormar.String(max_length=100, nullable=True)
+    category: int = ormar.Integer(nullable=True)
+    start_time: datetime = ormar.DateTime(nullable=True)
+    end_time: datetime = ormar.DateTime(nullable=True)
+    message: str = ormar.String(max_length=100, nullable=True)
+    start_file_name: str = ormar.String(max_length=10, nullable=True)
+    end_file_name: str = ormar.String(max_length=10, nullable=True)
+    project: str = ormar.String(max_length=100, nullable=True)
+    event_id: int = ormar.Integer()
 
 class TestingLog(ormar.Model):
     class Meta(MainMeta):
